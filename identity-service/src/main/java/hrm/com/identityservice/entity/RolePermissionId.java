@@ -28,10 +28,14 @@ public class RolePermissionId implements Serializable {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof RolePermissionId that)) return false;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        RolePermissionId that = (RolePermissionId) o;
+
         return Objects.equals(roleName, that.roleName)
                 && Objects.equals(permissionName, that.permissionName);
     }
+
 
     @Override
     public int hashCode() {

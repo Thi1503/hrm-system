@@ -6,7 +6,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.hrm</groupId>
+    <groupId>hrm.com</groupId>
     <artifactId>hrm-system</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
