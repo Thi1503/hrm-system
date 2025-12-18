@@ -7,6 +7,7 @@ import java.util.List;
 import com.hrm.common.enums.ErrorCode;
 import com.hrm.common.exception.BusinessException;
 import hrm.com.identityservice.entity.UserStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import hrm.com.identityservice.dto.request.UserRequest;
@@ -25,14 +26,17 @@ public class UserService {
 
     UserRepository userRepository;
     UserMapper userMapper;
+    PasswordEncoder passwordEncoder;
 
     /* ================= CREATE ================= */
     public UserResponse create(UserRequest request) {
-        if(userRepository.existsByUsername(request.getUsername())) throw new BusinessException(ErrorCode.DATA_ALREADY_EXISTS, "User is Already Exists");
+        if(userRepository.existsByUsername(request.getUsername())) throw new BusinessException(ErrorCode.USER_ALREADY_EXISTS, "username đã tồn tại");
         UserEntity user = userMapper.toEntity(request);
         user.setId(java.util.UUID.randomUUID().toString());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
+        user.setStatus(UserStatus.ACTIVE);
 
         return userMapper.toResponse(userRepository.save(user));
     }
@@ -61,7 +65,7 @@ public class UserService {
             user.setUsername(request.getUsername());
         }
         if (request.getPassword() != null) {
-            user.setPassword(request.getPassword());
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
 
