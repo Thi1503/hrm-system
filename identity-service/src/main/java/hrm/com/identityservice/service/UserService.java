@@ -3,6 +3,7 @@ package hrm.com.identityservice.service;
 import java.time.LocalDateTime;
 import java.util.List;
 
+
 import com.hrm.common.enums.ErrorCode;
 import com.hrm.common.exception.BusinessException;
 import hrm.com.identityservice.entity.UserStatus;
@@ -32,7 +33,6 @@ public class UserService {
         user.setId(java.util.UUID.randomUUID().toString());
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
-        user.setStatus(UserStatus.ACTIVE);
 
         return userMapper.toResponse(userRepository.save(user));
     }
