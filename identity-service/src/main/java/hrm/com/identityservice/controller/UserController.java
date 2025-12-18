@@ -35,7 +35,7 @@ public class UserController {
 
     /* ========= GET ONE ========= */
     @GetMapping("/{id}")
-    BaseResponse<UserResponse> getById(@PathVariable String id) {
+    BaseResponse<UserResponse> getById(@PathVariable("id") String id) {
         return BaseResponse.success(userService.getById(id));
     }
 
@@ -49,7 +49,7 @@ public class UserController {
 
     /* ========= DELETE ========= */
     @DeleteMapping("/{id}")
-    BaseResponse<Void> delete(@PathVariable String id) {
+    BaseResponse<Void> delete(@PathVariable("id") String id) {
         userService.delete(id);
         return BaseResponse.success(null);
     }
