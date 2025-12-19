@@ -6,6 +6,7 @@ import java.util.List;
 
 import com.hrm.common.enums.ErrorCode;
 import com.hrm.common.exception.BusinessException;
+import hrm.com.identityservice.dto.request.ChangePasswordRequest;
 import hrm.com.identityservice.entity.UserStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -77,4 +78,24 @@ public class UserService {
     public void delete(String id) {
         userRepository.deleteById(id);
     }
+
+
+    /* ================= CHANGE PASSWORD BY JWT ================= */
+    public void changePasswordByUserId(String userId, ChangePasswordRequest request) {
+        UserEntity user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("USER_NOT_FOUND"));
+
+        // Check mật khẩu cũ
+        if (!passwordEncoder.matches(request.getOldPassword(), user.getPassword())) {
+            throw new RuntimeException("OLD_PASSWORD_INVALID");
+        }
+
+        // Encode mật khẩu mới
+        user.setPassword(passwordEncoder.encode(request.getNewPassword()));
+        user.setUpdatedAt(LocalDateTime.now());
+
+        userRepository.save(user);
+    }
+
+
 }

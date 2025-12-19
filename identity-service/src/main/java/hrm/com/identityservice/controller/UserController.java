@@ -2,7 +2,10 @@ package hrm.com.identityservice.controller;
 
 import java.util.List;
 
+import hrm.com.identityservice.dto.request.ChangePasswordRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.*;
+import hrm.com.identityservice.security.JwtUtil;
 
 import hrm.com.identityservice.dto.request.UserRequest;
 import hrm.com.identityservice.dto.response.UserResponse;
@@ -20,6 +23,7 @@ import lombok.experimental.FieldDefaults;
 public class UserController {
 
     UserService userService;
+    JwtUtil jwtUtil;
 
     /* ========= CREATE ========= */
     @PostMapping
@@ -39,18 +43,35 @@ public class UserController {
         return BaseResponse.success(userService.getById(id));
     }
 
-    /* ========= UPDATE (POST) ========= */
     @PostMapping("/{id}")
     BaseResponse<UserResponse> update(
-            @PathVariable String id,
+            @PathVariable("id") String id,
             @RequestBody UserRequest request) {
         return BaseResponse.success(userService.update(id, request));
     }
 
-    /* ========= DELETE ========= */
     @DeleteMapping("/{id}")
     BaseResponse<Void> delete(@PathVariable("id") String id) {
         userService.delete(id);
         return BaseResponse.success(null);
     }
+
+    /* ========= CHANGE PASSWORD (JWT) ========= */
+    @PostMapping("/change-password")
+    BaseResponse<Void> changePassword(
+            HttpServletRequest request,
+            @RequestBody ChangePasswordRequest body) {
+
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            throw new RuntimeException("TOKEN_MISSING");
+        }
+
+        String token = authHeader.substring(7);
+        String userId = jwtUtil.extractUserIdFromToken(token);
+
+        userService.changePasswordByUserId(userId, body);
+        return BaseResponse.success(null);
+    }
+
 }
