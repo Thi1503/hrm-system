@@ -9,6 +9,7 @@ public enum ErrorCode {
     UNAUTHORIZED,
     FORBIDDEN,
     SYSTEM_ERROR,
+    USER_ALREADY_EXISTS,
 
     // AUTH
     USERNAME_OR_PASSWORD_INVALID,

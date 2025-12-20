@@ -1,0 +1,39 @@
+#server:
+#  port: 8080
+#  servlet:
+#    context-path: /identity
+#
+#spring:
+#  datasource:
+#    url: jdbc:mysql://${DB_HOST:mysql}:${DB_PORT:3306}/identity_service
+#    username: ${DB_USER:root}
+#    password: ${DB_PASSWORD:root}
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: validate
+#    show-sql: true
+
+
+server:
+  port: 8080
+  servlet:
+    context-path: /identity
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3307/identity_service
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+jwt:
+    secret: 5a17ebf57445277d088804588e896e6ae347ec9815f9f9f0b95065101e022eb8
+    expiration-days: 180
+
