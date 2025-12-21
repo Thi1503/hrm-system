@@ -2,9 +2,9 @@ version: "3.9"
 
 services:
 
-  mysql:
+  mysql-identity:
     image: mysql:8.0
-    container_name: hrm-mysql
+    container_name: mysql-identity
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: root
@@ -12,7 +12,7 @@ services:
     ports:
       - "3307:3306"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - mysql_identity_data:/var/lib/mysql
       - ./mysql/init:/docker-entrypoint-initdb.d
     command: --default-authentication-plugin=mysql_native_password
 
@@ -23,12 +23,46 @@ services:
     ports:
       - "8080:8080"
     environment:
-      DB_HOST: mysql
+      DB_HOST: mysql-identity
       DB_PORT: 3306
       DB_USER: root
       DB_PASSWORD: root
     depends_on:
-      - mysql
+      - mysql-identity
+
+
+  # ===============================
+  # MySQL - Employee Service
+  # ===============================
+  mysql-employee:
+    image: mysql:8.0
+    container_name: mysql-employee
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: employee_service
+    ports:
+      - "3308:3306"
+    volumes:
+      - mysql_employee_data:/var/lib/mysql
+      - ./mysql/employee-init:/docker-entrypoint-initdb.d
+    command: --default-authentication-plugin=mysql_native_password
+
+  employee-service:
+    build:
+      context: ./employee-service
+    container_name: employee-service
+    ports:
+      - "8081:8081"
+    environment:
+      DB_HOST: mysql-employee
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: root
+    depends_on:
+      - mysql-employee
+
 
 volumes:
-  mysql_data:
+  mysql_identity_data:
+  mysql_employee_data:
