@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -31,5 +32,60 @@ public class DepartmentService {
         Department department = departmentMapper.toEntity(request);
         department.setCreatedAt(LocalDateTime.now());
         return departmentMapper.toResponse(departmentRepository.save(department));
+    }
+
+    /** UPDATE */
+    public DepartmentResponse updateDepartment(Long id, DepartmentRequest request) {
+        Department department = departmentRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.NOT_FOUND,
+                        "Không tìm thấy phòng ban"
+                ));
+
+        if (!department.getName().equals(request.getName())
+                && departmentRepository.existsByName(request.getName())) {
+            throw new BusinessException(
+                    ErrorCode.DATA_ALREADY_EXISTS,
+                    "Tên phòng ban đã tồn tại"
+            );
+        }
+
+        department.setName(request.getName());
+        department.setHeadEmployeeId(request.getHeadEmployeeId());
+        department.setDescription(request.getDescription());
+
+        return departmentMapper.toResponse(
+                departmentRepository.save(department)
+        );
+    }
+
+    /** GET DETAIL */
+    public DepartmentResponse getDepartment(Long id) {
+        Department department = departmentRepository.findById(id)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.NOT_FOUND,
+                        "Không tìm thấy phòng ban"
+                ));
+
+        return departmentMapper.toResponse(department);
+    }
+
+    /** GET LIST */
+    public List<DepartmentResponse> getDepartments() {
+        return departmentRepository.findAll()
+                .stream()
+                .map(departmentMapper::toResponse)
+                .toList();
+    }
+
+    /** DELETE */
+    public void deleteDepartment(Long id) {
+        if (!departmentRepository.existsById(id)) {
+            throw new BusinessException(
+                    ErrorCode.NOT_FOUND,
+                    "Không tìm thấy phòng ban"
+            );
+        }
+        departmentRepository.deleteById(id);
     }
 }
