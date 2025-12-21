@@ -11,6 +11,7 @@ public enum ErrorCode {
     SYSTEM_ERROR,
     USER_ALREADY_EXISTS,
 
+
     // AUTH
     USERNAME_OR_PASSWORD_INVALID,
     ACCOUNT_LOCKED,
