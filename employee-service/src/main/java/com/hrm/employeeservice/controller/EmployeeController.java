@@ -2,6 +2,7 @@ package com.hrm.employeeservice.controller;
 
 import com.hrm.common.response.BaseResponse;
 import com.hrm.employeeservice.dto.request.EmployeeCreateRequest;
+import com.hrm.employeeservice.dto.request.EmployeeSearchRequest;
 import com.hrm.employeeservice.dto.request.EmployeeUpdateRequest;
 import com.hrm.employeeservice.dto.response.EmployeeItemResponse;
 import com.hrm.employeeservice.dto.response.EmployeeResponse;
@@ -57,4 +58,11 @@ public class EmployeeController {
     BaseResponse<List<EmployeeItemResponse>> getListByManagerId(@PathVariable("id") Long id) {
         return BaseResponse.success(employeeService.getListByManagerId(id));
     }
+
+    @PostMapping("/search")
+    BaseResponse<List<EmployeeItemResponse>> search(
+            @RequestBody EmployeeSearchRequest request) {
+        return BaseResponse.success(employeeService.search(request));
+    }
+
 }
