@@ -4,6 +4,7 @@ import com.hrm.common.enums.ErrorCode;
 import com.hrm.common.exception.BusinessException;
 import com.hrm.employeeservice.dto.request.EmployeeCreateRequest;
 import com.hrm.employeeservice.dto.request.EmployeeUpdateRequest;
+import com.hrm.employeeservice.dto.response.EmployeeItemResponse;
 import com.hrm.employeeservice.dto.response.EmployeeResponse;
 import com.hrm.employeeservice.entity.Department;
 import com.hrm.employeeservice.entity.Employee;
@@ -133,10 +134,10 @@ public class EmployeeService {
     }
 
     /** GET LIST */
-    public List<EmployeeResponse> getList() {
+    public List<EmployeeItemResponse> getList() {
         return employeeRepository.findAll()
                 .stream()
-                .map(employeeMapper::toResponse)
+                .map(employeeMapper::toItemResponse)
                 .toList();
     }
 
@@ -146,5 +147,12 @@ public class EmployeeService {
             throw new BusinessException(ErrorCode.NOT_FOUND, "Không tìm thấy nhân viên");
         }
         employeeRepository.deleteById(id);
+    }
+
+    public List<EmployeeItemResponse> getListByManagerId(Long managerId) {
+        return employeeRepository.findByManagerId(managerId)
+                .stream()
+                .map(employeeMapper::toItemResponse)
+                .toList();
     }
 }

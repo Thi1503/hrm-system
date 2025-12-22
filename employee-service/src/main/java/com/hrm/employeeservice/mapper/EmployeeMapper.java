@@ -1,5 +1,6 @@
 package com.hrm.employeeservice.mapper;
 
+import com.hrm.employeeservice.dto.response.EmployeeItemResponse;
 import com.hrm.employeeservice.dto.response.EmployeeResponse;
 import com.hrm.employeeservice.entity.Employee;
 import org.mapstruct.Mapper;
@@ -15,4 +16,8 @@ public interface EmployeeMapper {
     @Mapping(target = "managerId", source = "manager.id")
     @Mapping(target = "managerName", source = "manager.fullName")
     EmployeeResponse toResponse(Employee employee);
+
+    @Mapping(target = "positionName", source = "position.name")
+    @Mapping(target = "departmentName", source = "department.name")
+    EmployeeItemResponse toItemResponse(Employee employee);
 }

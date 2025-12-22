@@ -3,6 +3,7 @@ package com.hrm.employeeservice.controller;
 import com.hrm.common.response.BaseResponse;
 import com.hrm.employeeservice.dto.request.EmployeeCreateRequest;
 import com.hrm.employeeservice.dto.request.EmployeeUpdateRequest;
+import com.hrm.employeeservice.dto.response.EmployeeItemResponse;
 import com.hrm.employeeservice.dto.response.EmployeeResponse;
 import com.hrm.employeeservice.service.EmployeeService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -42,7 +43,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/list")
-    BaseResponse<List<EmployeeResponse>> list() {
+    BaseResponse<List<EmployeeItemResponse>> list() {
         return BaseResponse.success(employeeService.getList());
     }
 
@@ -50,5 +51,10 @@ public class EmployeeController {
     BaseResponse<Void> delete(@PathVariable("id") Long id) {
         employeeService.delete(id);
         return BaseResponse.success(null);
+    }
+
+    @GetMapping("/list-by-manager/{id}")
+    BaseResponse<List<EmployeeItemResponse>> getListByManagerId(@PathVariable("id") Long id) {
+        return BaseResponse.success(employeeService.getListByManagerId(id));
     }
 }
