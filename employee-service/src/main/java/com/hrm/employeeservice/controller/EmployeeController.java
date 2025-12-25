@@ -1,9 +1,11 @@
 package com.hrm.employeeservice.controller;
 
 import com.hrm.common.response.BaseResponse;
+import com.hrm.employeeservice.dto.request.AccountIdRequest;
 import com.hrm.employeeservice.dto.request.EmployeeCreateRequest;
 import com.hrm.employeeservice.dto.request.EmployeeSearchRequest;
 import com.hrm.employeeservice.dto.request.EmployeeUpdateRequest;
+import com.hrm.employeeservice.dto.response.EmployeeInfoResponse;
 import com.hrm.employeeservice.dto.response.EmployeeItemResponse;
 import com.hrm.employeeservice.dto.response.EmployeeResponse;
 import com.hrm.employeeservice.service.EmployeeService;
@@ -64,5 +66,10 @@ public class EmployeeController {
             @RequestBody EmployeeSearchRequest request) {
         return BaseResponse.success(employeeService.search(request));
     }
+
+    @PostMapping("/internal/by-account-id")
+    BaseResponse<EmployeeInfoResponse> getByAccountId(@RequestBody AccountIdRequest request){
+        return BaseResponse.success(employeeService.getByAccountId(request.getAccountId()));
+    };
 
 }

@@ -18,6 +18,8 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
 
     List<Employee> findByManagerId(Long managerId);
 
+    Optional<Employee> findByAccountId(String accountId);
+
     @Query("""
                 SELECT e FROM Employee e
                 WHERE (:keyword IS NULL
