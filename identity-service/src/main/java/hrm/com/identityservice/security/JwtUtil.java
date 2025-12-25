@@ -22,12 +22,16 @@ public class JwtUtil {
             String userId,
             String username,
             String status,
+            Long employeeId,
+            String employeeName,
             List<String> roles
     ) {
         return Jwts.builder()
-                .setSubject(userId)
+                .setSubject(userId) // sub
                 .claim("username", username)
                 .claim("status", status)
+                .claim("employeeId", employeeId)
+                .claim("employeeName", employeeName)
                 .claim("roles", roles)
                 .setIssuedAt(new Date())
                 .setExpiration(
@@ -45,16 +49,16 @@ public class JwtUtil {
                 .getBody();
     }
 
-    public String getUserId(String token) {
+    public String extractUserIdFromToken(String token) {
         return getClaims(token).getSubject();
     }
 
-    public String getUsername(String token) {
-        return getClaims(token).get("username", String.class);
+    /* ===== EXTRACT EMPLOYEE INFO ===== */
+    public Long extractEmployeeId(String token) {
+        return getClaims(token).get("employeeId", Long.class);
     }
 
-    public String extractUserIdFromToken(String token) {
-        Claims claims = getClaims(token);
-        return claims.getSubject(); // sub = userId
+    public String extractEmployeeName(String token) {
+        return getClaims(token).get("employeeName", String.class);
     }
 }
