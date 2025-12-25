@@ -9,11 +9,14 @@ import com.hrm.employeeservice.dto.response.EmployeeItemResponse;
 import com.hrm.employeeservice.dto.response.EmployeeResponse;
 import com.hrm.employeeservice.entity.Department;
 import com.hrm.employeeservice.entity.Employee;
+import com.hrm.employeeservice.entity.EmployeeWorkHistory;
 import com.hrm.employeeservice.entity.JobPosition;
 import com.hrm.employeeservice.mapper.EmployeeMapper;
 import com.hrm.employeeservice.repository.DepartmentRepository;
 import com.hrm.employeeservice.repository.EmployeeRepository;
+import com.hrm.employeeservice.repository.EmployeeWorkHistoryRepository;
 import com.hrm.employeeservice.repository.JobPositionRepository;
+import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,6 +25,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -34,8 +38,11 @@ public class EmployeeService {
     DepartmentRepository departmentRepository;
     JobPositionRepository jobPositionRepository;
     EmployeeMapper employeeMapper;
+    EmployeeWorkHistoryRepository employeeWorkHistoryRepository;
 
-    /** CREATE */
+    /**
+     * CREATE
+     */
     public EmployeeResponse create(EmployeeCreateRequest request) {
 
         if (employeeRepository.existsByCode(request.getCode())) {
@@ -84,27 +91,66 @@ public class EmployeeService {
         );
     }
 
-    /** UPDATE */
+    @Transactional
     public EmployeeResponse update(Long id, EmployeeUpdateRequest request) {
 
         Employee employee = employeeRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND, "Không tìm thấy nhân viên"));
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.NOT_FOUND,
+                        "Không tìm thấy nhân viên"
+                ));
 
+    /* ===============================
+       1️ Detect thay đổi công việc
+       =============================== */
+        boolean isWorkChanged = request.getDepartmentId() != null &&
+                !employee.getDepartment().getId().equals(request.getDepartmentId());
+
+        if (request.getPositionId() != null &&
+                !employee.getPosition().getId().equals(request.getPositionId())) {
+            isWorkChanged = true;
+        }
+
+        if (request.getManagerId() != null &&
+                (employee.getManager() == null ||
+                        !employee.getManager().getId().equals(request.getManagerId()))) {
+            isWorkChanged = true;
+        }
+
+    /* ===============================
+       2️ Lưu WORK HISTORY (DATA CŨ)
+       =============================== */
+        if (isWorkChanged) {
+            createWorkHistory(employee);
+        }
+
+    /* ===============================
+       3️ UPDATE DATA MỚI
+       =============================== */
         if (request.getDepartmentId() != null) {
             Department department = departmentRepository.findById(request.getDepartmentId())
-                    .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND, "Không tìm thấy phòng ban"));
+                    .orElseThrow(() -> new BusinessException(
+                            ErrorCode.NOT_FOUND,
+                            "Không tìm thấy phòng ban"
+                    ));
             employee.setDepartment(department);
         }
 
         if (request.getPositionId() != null) {
             JobPosition position = jobPositionRepository.findById(request.getPositionId())
-                    .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND, "Không tìm thấy chức vụ"));
+                    .orElseThrow(() -> new BusinessException(
+                            ErrorCode.NOT_FOUND,
+                            "Không tìm thấy chức vụ"
+                    ));
             employee.setPosition(position);
         }
 
         if (request.getManagerId() != null) {
             Employee manager = employeeRepository.findById(request.getManagerId())
-                    .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND, "Không tìm thấy quản lý"));
+                    .orElseThrow(() -> new BusinessException(
+                            ErrorCode.NOT_FOUND,
+                            "Không tìm thấy quản lý"
+                    ));
             employee.setManager(manager);
         }
 
@@ -129,7 +175,9 @@ public class EmployeeService {
         );
     }
 
-    /** GET DETAIL */
+    /**
+     * GET DETAIL
+     */
     public EmployeeResponse getDetail(Long id) {
         return employeeMapper.toResponse(
                 employeeRepository.findById(id)
@@ -137,7 +185,9 @@ public class EmployeeService {
         );
     }
 
-    /** GET LIST */
+    /**
+     * GET LIST
+     */
     public List<EmployeeItemResponse> getList() {
         return employeeRepository.findAll()
                 .stream()
@@ -145,7 +195,9 @@ public class EmployeeService {
                 .toList();
     }
 
-    /** DELETE */
+    /**
+     * DELETE
+     */
     public void delete(Long id) {
         if (!employeeRepository.existsById(id)) {
             throw new BusinessException(ErrorCode.NOT_FOUND, "Không tìm thấy nhân viên");
@@ -175,6 +227,31 @@ public class EmployeeService {
                         PageRequest.of(page, size)
                 ).map(employeeMapper::toItemResponse)
                 .toList();
+    }
+
+
+    private void createWorkHistory(Employee oldEmployee) {
+        EmployeeWorkHistory history = new EmployeeWorkHistory();
+        history.setEmployee(oldEmployee);
+        history.setFromDate(oldEmployee.getStartWorkDate());
+        history.setToDate(LocalDate.now());
+
+        history.setDepartmentName(
+                oldEmployee.getDepartment() != null
+                        ? oldEmployee.getDepartment().getName()
+                        : null
+        );
+
+        history.setPositionName(
+                oldEmployee.getPosition() != null
+                        ? oldEmployee.getPosition().getName()
+                        : null
+        );
+
+        history.setDescription("Cập nhật thông tin công việc");
+        history.setCreatedAt(LocalDateTime.now());
+
+        employeeWorkHistoryRepository.save(history);
     }
 
 }
