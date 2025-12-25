@@ -5,6 +5,7 @@ import com.hrm.common.exception.BusinessException;
 import com.hrm.employeeservice.dto.request.EmployeeCreateRequest;
 import com.hrm.employeeservice.dto.request.EmployeeSearchRequest;
 import com.hrm.employeeservice.dto.request.EmployeeUpdateRequest;
+import com.hrm.employeeservice.dto.response.EmployeeInfoResponse;
 import com.hrm.employeeservice.dto.response.EmployeeItemResponse;
 import com.hrm.employeeservice.dto.response.EmployeeResponse;
 import com.hrm.employeeservice.entity.Department;
@@ -228,6 +229,21 @@ public class EmployeeService {
                 ).map(employeeMapper::toItemResponse)
                 .toList();
     }
+
+    public EmployeeInfoResponse getByAccountId(String accountId) {
+        Employee employee = employeeRepository
+                .findByAccountId(accountId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND, "Không tìm thấy nhân viên"));
+
+        return EmployeeInfoResponse.builder()
+                .employeeId(employee.getId())
+                .fullName(employee.getFullName())
+                .departmentId(employee.getDepartment().getId())
+                .departmentName(employee.getDepartment().getName())
+                .positionName(employee.getPosition().getName())
+                .build();
+    }
+
 
 
     private void createWorkHistory(Employee oldEmployee) {
