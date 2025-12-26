@@ -23,6 +23,7 @@
         <module>common-lib</module>
         <module>identity-service</module>
         <module>employee-service</module>
+        <module>attendance-service</module>
     </modules>
 
     <properties>

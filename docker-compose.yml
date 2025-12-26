@@ -45,5 +45,20 @@ services:
     depends_on:
       - mysql
 
+  attendance-service:
+    build:
+      context: ./attendance-service
+    container_name: attendance-service
+    ports:
+      - "8082:8082"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: attendance_service
+      DB_USER: root
+      DB_PASSWORD: root
+    depends_on:
+      - mysql
+
 volumes:
   mysql_data:
