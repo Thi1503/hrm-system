@@ -5,6 +5,7 @@ import com.hrm.common.exception.BusinessException;
 import com.hrm.employeeservice.dto.request.EmployeeCreateRequest;
 import com.hrm.employeeservice.dto.request.EmployeeSearchRequest;
 import com.hrm.employeeservice.dto.request.EmployeeUpdateRequest;
+import com.hrm.employeeservice.dto.request.UpdateMyInfoRequest;
 import com.hrm.employeeservice.dto.response.EmployeeInfoResponse;
 import com.hrm.employeeservice.dto.response.EmployeeItemResponse;
 import com.hrm.employeeservice.dto.response.EmployeeResponse;
@@ -244,6 +245,29 @@ public class EmployeeService {
                 .build();
     }
 
+    @Transactional
+    public EmployeeResponse updateMyInfo(String accountId,
+                                         UpdateMyInfoRequest request) {
+
+        Employee employee = employeeRepository.findByAccountId(accountId)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.NOT_FOUND,
+                        "Không tìm thấy thông tin nhân viên"
+                ));
+
+        employee.setFullName(request.getFullName());
+        employee.setGender(request.getGender());
+        employee.setDateOfBirth(request.getDateOfBirth());
+        employee.setPhoneNumber(request.getPhoneNumber());
+        employee.setEmail(request.getEmail());
+        employee.setAddress(request.getAddress());
+        employee.setAvatarUrl(request.getAvatarUrl());
+        employee.setUpdatedAt(LocalDateTime.now());
+
+        return employeeMapper.toResponse(
+                employeeRepository.save(employee)
+        );
+    }
 
 
     private void createWorkHistory(Employee oldEmployee) {
