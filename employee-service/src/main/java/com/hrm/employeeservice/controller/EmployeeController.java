@@ -1,10 +1,7 @@
 package com.hrm.employeeservice.controller;
 
 import com.hrm.common.response.BaseResponse;
-import com.hrm.employeeservice.dto.request.AccountIdRequest;
-import com.hrm.employeeservice.dto.request.EmployeeCreateRequest;
-import com.hrm.employeeservice.dto.request.EmployeeSearchRequest;
-import com.hrm.employeeservice.dto.request.EmployeeUpdateRequest;
+import com.hrm.employeeservice.dto.request.*;
 import com.hrm.employeeservice.dto.response.EmployeeInfoResponse;
 import com.hrm.employeeservice.dto.response.EmployeeItemResponse;
 import com.hrm.employeeservice.dto.response.EmployeeResponse;
@@ -71,5 +68,16 @@ public class EmployeeController {
     BaseResponse<EmployeeInfoResponse> getByAccountId(@RequestBody AccountIdRequest request){
         return BaseResponse.success(employeeService.getByAccountId(request.getAccountId()));
     };
+
+    /** UPDATE MY INFO (X-User-Id từ Gateway / Postman) */
+    @PostMapping("/update-my-info")
+    BaseResponse<EmployeeResponse> updateMyInfo(
+            @RequestHeader("X-User-Id") String userId,
+            @RequestBody UpdateMyInfoRequest body) {
+
+        return BaseResponse.success(
+                employeeService.updateMyInfo(userId, body)
+        );
+    }
 
 }
