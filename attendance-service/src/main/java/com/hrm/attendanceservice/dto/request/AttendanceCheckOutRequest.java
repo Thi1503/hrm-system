@@ -1,23 +1,27 @@
-package com.hrm.attendanceservice.dto.response;
+package com.hrm.attendanceservice.dto.request;
 
+
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class AttendanceLocationRuleResponse {
+@Getter
+@Setter
+public class AttendanceCheckOutRequest {
 
-    Long id;
-    String name;
+    @NotNull
     BigDecimal latitude;
+
+    @NotNull
     BigDecimal longitude;
-    Integer radiusMeter;
-    Boolean isActive;
-    LocalDateTime createdAt;
+
+    String deviceInfo;
 }
+
