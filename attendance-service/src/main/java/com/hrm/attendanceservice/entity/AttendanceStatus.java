@@ -4,5 +4,7 @@ public enum AttendanceStatus {
     NORMAL,
     LATE,
     EARLY,
-    ABSENT
+    ABSENT,
+    OFF,     // ngày nghỉ, không làm
+    OT       // ngày nghỉ nhưng có đi làm
 }
