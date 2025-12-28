@@ -59,4 +59,22 @@ public class AttendanceDailySummaryEntity {
 
     @Column(name = "created_at", nullable = false, updatable = false)
     LocalDateTime createdAt;
+
+    @PrePersist
+    void prePersist() {
+        this.createdAt = LocalDateTime.now();
+
+        if (this.lateMinutes == null) {
+            this.lateMinutes = 0;
+        }
+        if (this.earlyMinutes == null) {
+            this.earlyMinutes = 0;
+        }
+        if (this.workMinutes == null) {
+            this.workMinutes = 0;
+        }
+    }
+
+
+
 }

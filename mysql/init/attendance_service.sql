@@ -93,3 +93,12 @@ CREATE INDEX idx_daily_summary_employee
 
 CREATE INDEX idx_daily_summary_date
     ON attendance_daily_summary(work_date);
+
+
+CREATE TABLE work_calendar (
+                               id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                               work_date DATE NOT NULL UNIQUE,
+                               day_type ENUM('WORKING', 'WEEKEND', 'HOLIDAY') NOT NULL,
+                               description VARCHAR(255),
+                               created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
