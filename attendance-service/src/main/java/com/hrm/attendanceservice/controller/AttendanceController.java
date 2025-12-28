@@ -2,6 +2,7 @@ package com.hrm.attendanceservice.controller;
 
 import com.hrm.attendanceservice.dto.request.AttendanceCheckInRequest;
 import com.hrm.attendanceservice.dto.request.AttendanceCheckOutRequest;
+import com.hrm.attendanceservice.dto.response.MyTodayAttendanceResponse;
 import com.hrm.attendanceservice.service.AttendanceService;
 import com.hrm.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,4 +38,14 @@ public class AttendanceController {
         attendanceService.checkOut(userId, request);
         return BaseResponse.success(null);
     }
+
+    @GetMapping("/my-today")
+    BaseResponse<MyTodayAttendanceResponse> myToday(
+            @RequestHeader("X-User-Id") String userId) {
+
+        return BaseResponse.success(
+                attendanceService.getMyToday(userId)
+        );
+    }
+
 }

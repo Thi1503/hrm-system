@@ -2,6 +2,7 @@ package com.hrm.attendanceservice.service;
 
 import com.hrm.attendanceservice.dto.request.AttendanceCheckInRequest;
 import com.hrm.attendanceservice.dto.request.AttendanceCheckOutRequest;
+import com.hrm.attendanceservice.dto.response.MyTodayAttendanceResponse;
 import com.hrm.attendanceservice.entity.*;
 import com.hrm.attendanceservice.repository.*;
 import com.hrm.attendanceservice.util.GeoUtils;
@@ -170,4 +171,30 @@ public class AttendanceService {
             boolean valid,
             AttendanceLocationRuleEntity rule
     ) {}
+
+
+    public MyTodayAttendanceResponse getMyToday(String userId) {
+
+        Long employeeId = Long.valueOf(userId);
+        LocalDate today = LocalDate.now();
+
+        return summaryRepository
+                .findByEmployeeIdAndWorkDate(employeeId, today)
+                .map(s -> MyTodayAttendanceResponse.builder()
+                        .workDate(today)
+                        .checkInTime(s.getCheckInTime())
+                        .checkOutTime(s.getCheckOutTime())
+                        .status(s.getStatus())
+                        .workMinutes(s.getWorkMinutes())
+                        .build()
+                )
+                .orElse(
+                        MyTodayAttendanceResponse.builder()
+                                .workDate(today)
+                                .status(AttendanceStatus.ABSENT)
+                                .workMinutes(0)
+                                .build()
+                );
+    }
+
 }
