@@ -65,6 +65,13 @@ public class AttendanceService {
                 .build();
 
         logRepository.save(log);
+        AttendanceShiftEntity defaultShift =
+                shiftRepository.findAll().stream()
+                        .findFirst()
+                        .orElseThrow(() -> new BusinessException(
+                                ErrorCode.NOT_FOUND,
+                                "Chưa cấu hình ca làm việc"
+                        ));
 
         /* ===== 4. Daily summary ===== */
         AttendanceDailySummaryEntity summary =
@@ -72,7 +79,7 @@ public class AttendanceService {
                         .orElseGet(() -> AttendanceDailySummaryEntity.builder()
                                 .employeeId(employeeId)
                                 .workDate(today)
-                                .shift(shiftRepository.findAll().getFirst())
+                                .shift(defaultShift)   // dùng ca mặc định
                                 .lateMinutes(0)
                                 .earlyMinutes(0)
                                 .workMinutes(0)
@@ -82,6 +89,7 @@ public class AttendanceService {
                                 .createdAt(now)
                                 .build()
                         );
+
 
         // chỉ set check-in lần đầu hợp lệ
         if (summary.getCheckInTime() == null && locationResult.valid()) {

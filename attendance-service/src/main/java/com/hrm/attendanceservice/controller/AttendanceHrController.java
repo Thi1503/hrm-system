@@ -1,7 +1,9 @@
 package com.hrm.attendanceservice.controller;
 
+import com.hrm.attendanceservice.dto.request.AssignShiftRequest;
 import com.hrm.attendanceservice.dto.request.AttendanceApproveLocationRequest;
 import com.hrm.attendanceservice.dto.request.AttendanceManualAdjustRequest;
+import com.hrm.attendanceservice.dto.request.RecalculateAttendanceRequest;
 import com.hrm.attendanceservice.dto.response.HrAttendanceByDateResponse;
 import com.hrm.attendanceservice.dto.response.HrAttendanceByMonthResponse;
 import com.hrm.attendanceservice.service.AttendanceHrService;
@@ -61,7 +63,21 @@ public class AttendanceHrController {
         return BaseResponse.success(null);
     }
 
+    @PostMapping("/assign-shift")
+    BaseResponse<Void> assignShift(
+            @RequestBody @Valid AssignShiftRequest request
+    ) {
+        service.assignShift(request);
+        return BaseResponse.success(null);
+    }
 
+    @PostMapping("/recalculate")
+    BaseResponse<Void> recalculate(
+            @RequestBody @Valid RecalculateAttendanceRequest request
+    ) {
+        service.recalculate(request);
+        return BaseResponse.success(null);
+    }
 
 }
 
