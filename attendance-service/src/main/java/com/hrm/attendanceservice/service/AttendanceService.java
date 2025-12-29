@@ -88,6 +88,22 @@ public class AttendanceService {
             summary.setCheckInTime(now);
         }
 
+        AttendanceShiftEntity shift = summary.getShift();
+
+        LocalDateTime startTime =
+                LocalDateTime.of(today, shift.getStartTime());
+
+        long lateMinutes = Math.max(
+                0,
+                Duration.between(startTime, now).toMinutes()
+        );
+
+
+        if (lateMinutes > shift.getLateThresholdMin()) {
+            summary.setLateMinutes((int) lateMinutes);
+            summary.setStatus(AttendanceStatus.LATE);
+        }
+
         summaryRepository.save(summary);
     }
 
@@ -134,6 +150,21 @@ public class AttendanceService {
                     now.isAfter(summary.getCheckOutTime())) {
 
                 summary.setCheckOutTime(now);
+                AttendanceShiftEntity shift = summary.getShift();
+
+                LocalDateTime endTime =
+                        LocalDateTime.of(today, shift.getEndTime());
+
+                long earlyMinutes = Math.max(
+                        0,
+                        Duration.between(now, endTime).toMinutes()
+                );
+
+
+                if (earlyMinutes > shift.getEarlyThresholdMin()) {
+                    summary.setEarlyMinutes((int) earlyMinutes);
+                    summary.setStatus(AttendanceStatus.EARLY);
+                }
 
                 long minutes =
                         Duration.between(summary.getCheckInTime(), now).toMinutes();
