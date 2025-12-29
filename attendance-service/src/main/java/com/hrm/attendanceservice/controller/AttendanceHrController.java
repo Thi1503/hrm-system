@@ -1,17 +1,17 @@
 package com.hrm.attendanceservice.controller;
 
+import com.hrm.attendanceservice.dto.request.AttendanceApproveLocationRequest;
+import com.hrm.attendanceservice.dto.request.AttendanceManualAdjustRequest;
 import com.hrm.attendanceservice.dto.response.HrAttendanceByDateResponse;
 import com.hrm.attendanceservice.dto.response.HrAttendanceByMonthResponse;
 import com.hrm.attendanceservice.service.AttendanceHrService;
 import com.hrm.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -44,6 +44,24 @@ public class AttendanceHrController {
                 service.getByMonth(month, employeeId)
         );
     }
+
+    @PostMapping("/manual-adjust")
+    BaseResponse<Void> manualAdjust(
+            @RequestBody @Valid AttendanceManualAdjustRequest request
+    ) {
+        service.manualAdjust(request);
+        return BaseResponse.success(null);
+    }
+
+    @PostMapping("/approve-invalid-location")
+    BaseResponse<Void> approveInvalidLocation(
+            @RequestBody AttendanceApproveLocationRequest request
+    ) {
+        service.approveInvalidLocation(request);
+        return BaseResponse.success(null);
+    }
+
+
 
 }
 
