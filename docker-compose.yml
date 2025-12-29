@@ -60,5 +60,19 @@ services:
     depends_on:
       - mysql
 
+  request-approval-service:
+    build:
+      context: ./request-approval-service
+    container_name: request-approval-service
+    ports:
+      - "8083:8083"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: request_approval_service
+      DB_USER: root
+      DB_PASSWORD: root
+    depends_on:
+      - mysql
 volumes:
   mysql_data:
