@@ -2,6 +2,7 @@ package com.hrm.attendanceservice.service;
 
 import com.hrm.attendanceservice.dto.request.AttendanceCheckInRequest;
 import com.hrm.attendanceservice.dto.request.AttendanceCheckOutRequest;
+import com.hrm.attendanceservice.dto.response.MyAttendanceLogResponse;
 import com.hrm.attendanceservice.dto.response.MyMonthAttendanceItemResponse;
 import com.hrm.attendanceservice.dto.response.MyTodayAttendanceResponse;
 import com.hrm.attendanceservice.entity.*;
@@ -221,6 +222,35 @@ public class AttendanceService {
                 )
                 .toList();
     }
+
+    public List<MyAttendanceLogResponse> getMyLogs(
+            String userId,
+            LocalDate from,
+            LocalDate to) {
+
+        Long employeeId = Long.valueOf(userId);
+
+        return logRepository
+                .findAllByEmployeeIdAndCheckTimeBetweenOrderByCheckTimeAsc(
+                        employeeId,
+                        from.atStartOfDay(),
+                        to.atTime(23, 59, 59)
+                )
+                .stream()
+                .map(log -> MyAttendanceLogResponse.builder()
+                        .checkTime(log.getCheckTime())
+                        .checkType(log.getCheckType())
+                        .validLocation(log.getIsValidLocation())
+                        .locationName(
+                                log.getLocationRule() != null
+                                        ? log.getLocationRule().getName()
+                                        : null
+                        )
+                        .build()
+                )
+                .toList();
+    }
+
 
 
 }

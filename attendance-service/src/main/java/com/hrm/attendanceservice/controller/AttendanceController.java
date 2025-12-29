@@ -2,6 +2,7 @@ package com.hrm.attendanceservice.controller;
 
 import com.hrm.attendanceservice.dto.request.AttendanceCheckInRequest;
 import com.hrm.attendanceservice.dto.request.AttendanceCheckOutRequest;
+import com.hrm.attendanceservice.dto.response.MyAttendanceLogResponse;
 import com.hrm.attendanceservice.dto.response.MyMonthAttendanceItemResponse;
 import com.hrm.attendanceservice.dto.response.MyTodayAttendanceResponse;
 import com.hrm.attendanceservice.service.AttendanceService;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Tag(name = "attendance")
@@ -61,5 +63,15 @@ public class AttendanceController {
         );
     }
 
+    @GetMapping("/my-logs")
+    BaseResponse<List<MyAttendanceLogResponse>> myLogs(
+            @RequestHeader("X-User-Id") String userId,
+            @RequestParam("from") LocalDate from,
+            @RequestParam("to") LocalDate to) {
+
+        return BaseResponse.success(
+                attendanceService.getMyLogs(userId, from, to)
+        );
+    }
 
 }
