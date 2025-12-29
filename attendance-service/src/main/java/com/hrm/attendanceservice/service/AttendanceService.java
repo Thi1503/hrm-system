@@ -65,6 +65,13 @@ public class AttendanceService {
                 .build();
 
         logRepository.save(log);
+        AttendanceShiftEntity defaultShift =
+                shiftRepository.findAll().stream()
+                        .findFirst()
+                        .orElseThrow(() -> new BusinessException(
+                                ErrorCode.NOT_FOUND,
+                                "Chưa cấu hình ca làm việc"
+                        ));
 
         /* ===== 4. Daily summary ===== */
         AttendanceDailySummaryEntity summary =
@@ -72,7 +79,7 @@ public class AttendanceService {
                         .orElseGet(() -> AttendanceDailySummaryEntity.builder()
                                 .employeeId(employeeId)
                                 .workDate(today)
-                                .shift(shiftRepository.findAll().getFirst())
+                                .shift(defaultShift)   // dùng ca mặc định
                                 .lateMinutes(0)
                                 .earlyMinutes(0)
                                 .workMinutes(0)
@@ -83,9 +90,26 @@ public class AttendanceService {
                                 .build()
                         );
 
+
         // chỉ set check-in lần đầu hợp lệ
         if (summary.getCheckInTime() == null && locationResult.valid()) {
             summary.setCheckInTime(now);
+        }
+
+        AttendanceShiftEntity shift = summary.getShift();
+
+        LocalDateTime startTime =
+                LocalDateTime.of(today, shift.getStartTime());
+
+        long lateMinutes = Math.max(
+                0,
+                Duration.between(startTime, now).toMinutes()
+        );
+
+
+        if (lateMinutes > shift.getLateThresholdMin()) {
+            summary.setLateMinutes((int) lateMinutes);
+            summary.setStatus(AttendanceStatus.LATE);
         }
 
         summaryRepository.save(summary);
@@ -134,6 +158,21 @@ public class AttendanceService {
                     now.isAfter(summary.getCheckOutTime())) {
 
                 summary.setCheckOutTime(now);
+                AttendanceShiftEntity shift = summary.getShift();
+
+                LocalDateTime endTime =
+                        LocalDateTime.of(today, shift.getEndTime());
+
+                long earlyMinutes = Math.max(
+                        0,
+                        Duration.between(now, endTime).toMinutes()
+                );
+
+
+                if (earlyMinutes > shift.getEarlyThresholdMin()) {
+                    summary.setEarlyMinutes((int) earlyMinutes);
+                    summary.setStatus(AttendanceStatus.EARLY);
+                }
 
                 long minutes =
                         Duration.between(summary.getCheckInTime(), now).toMinutes();
