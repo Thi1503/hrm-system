@@ -21,5 +21,12 @@ public interface AttendanceLogRepository
             LocalDateTime start,
             LocalDateTime end
     );
+
+    List<AttendanceLogEntity>
+    findAllByEmployeeIdAndCheckTimeBetweenOrderByCheckTimeAsc(
+            Long employeeId,
+            LocalDateTime from,
+            LocalDateTime to
+    );
 }
 

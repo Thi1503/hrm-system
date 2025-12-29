@@ -2,6 +2,9 @@ package com.hrm.attendanceservice.service;
 
 import com.hrm.attendanceservice.dto.request.AttendanceCheckInRequest;
 import com.hrm.attendanceservice.dto.request.AttendanceCheckOutRequest;
+import com.hrm.attendanceservice.dto.response.MyAttendanceLogResponse;
+import com.hrm.attendanceservice.dto.response.MyMonthAttendanceItemResponse;
+import com.hrm.attendanceservice.dto.response.MyTodayAttendanceResponse;
 import com.hrm.attendanceservice.entity.*;
 import com.hrm.attendanceservice.repository.*;
 import com.hrm.attendanceservice.util.GeoUtils;
@@ -170,4 +173,84 @@ public class AttendanceService {
             boolean valid,
             AttendanceLocationRuleEntity rule
     ) {}
+
+
+    public MyTodayAttendanceResponse getMyToday(String userId) {
+
+        Long employeeId = Long.valueOf(userId);
+        LocalDate today = LocalDate.now();
+
+        return summaryRepository
+                .findByEmployeeIdAndWorkDate(employeeId, today)
+                .map(s -> MyTodayAttendanceResponse.builder()
+                        .workDate(today)
+                        .checkInTime(s.getCheckInTime())
+                        .checkOutTime(s.getCheckOutTime())
+                        .status(s.getStatus())
+                        .workMinutes(s.getWorkMinutes())
+                        .build()
+                )
+                .orElse(
+                        MyTodayAttendanceResponse.builder()
+                                .workDate(today)
+                                .status(AttendanceStatus.ABSENT)
+                                .workMinutes(0)
+                                .build()
+                );
+    }
+
+
+    public List<MyMonthAttendanceItemResponse> getMyMonth(
+            String userId,
+            String month) {
+
+        Long employeeId = Long.valueOf(userId);
+
+        LocalDate from = LocalDate.parse(month + "-01");
+        LocalDate to = from.withDayOfMonth(from.lengthOfMonth());
+
+        return summaryRepository
+                .findAllByEmployeeIdAndWorkDateBetween(employeeId, from, to)
+                .stream()
+                .map(s -> MyMonthAttendanceItemResponse.builder()
+                        .workDate(s.getWorkDate())
+                        .status(s.getStatus())
+                        .workMinutes(s.getWorkMinutes())
+                        .lateMinutes(s.getLateMinutes())
+                        .earlyMinutes(s.getEarlyMinutes())
+                        .build()
+                )
+                .toList();
+    }
+
+    public List<MyAttendanceLogResponse> getMyLogs(
+            String userId,
+            LocalDate from,
+            LocalDate to) {
+
+        Long employeeId = Long.valueOf(userId);
+
+        return logRepository
+                .findAllByEmployeeIdAndCheckTimeBetweenOrderByCheckTimeAsc(
+                        employeeId,
+                        from.atStartOfDay(),
+                        to.atTime(23, 59, 59)
+                )
+                .stream()
+                .map(log -> MyAttendanceLogResponse.builder()
+                        .checkTime(log.getCheckTime())
+                        .checkType(log.getCheckType())
+                        .validLocation(log.getIsValidLocation())
+                        .locationName(
+                                log.getLocationRule() != null
+                                        ? log.getLocationRule().getName()
+                                        : null
+                        )
+                        .build()
+                )
+                .toList();
+    }
+
+
+
 }
