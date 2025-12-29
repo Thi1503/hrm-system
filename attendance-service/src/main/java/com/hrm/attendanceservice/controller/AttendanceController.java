@@ -2,6 +2,9 @@ package com.hrm.attendanceservice.controller;
 
 import com.hrm.attendanceservice.dto.request.AttendanceCheckInRequest;
 import com.hrm.attendanceservice.dto.request.AttendanceCheckOutRequest;
+import com.hrm.attendanceservice.dto.response.MyAttendanceLogResponse;
+import com.hrm.attendanceservice.dto.response.MyMonthAttendanceItemResponse;
+import com.hrm.attendanceservice.dto.response.MyTodayAttendanceResponse;
 import com.hrm.attendanceservice.service.AttendanceService;
 import com.hrm.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -10,6 +13,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @Tag(name = "attendance")
 @RestController
@@ -37,4 +43,35 @@ public class AttendanceController {
         attendanceService.checkOut(userId, request);
         return BaseResponse.success(null);
     }
+
+    @GetMapping("/my-today")
+    BaseResponse<MyTodayAttendanceResponse> myToday(
+            @RequestHeader("X-User-Id") String userId) {
+
+        return BaseResponse.success(
+                attendanceService.getMyToday(userId)
+        );
+    }
+
+    @GetMapping("/my-month")
+    BaseResponse<List<MyMonthAttendanceItemResponse>> myMonth(
+            @RequestHeader("X-User-Id") String userId,
+            @RequestParam("month") String month) {
+
+        return BaseResponse.success(
+                attendanceService.getMyMonth(userId, month)
+        );
+    }
+
+    @GetMapping("/my-logs")
+    BaseResponse<List<MyAttendanceLogResponse>> myLogs(
+            @RequestHeader("X-User-Id") String userId,
+            @RequestParam("from") LocalDate from,
+            @RequestParam("to") LocalDate to) {
+
+        return BaseResponse.success(
+                attendanceService.getMyLogs(userId, from, to)
+        );
+    }
+
 }
