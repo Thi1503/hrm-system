@@ -30,5 +30,11 @@ public interface AttendanceDailySummaryRepository
             Long employeeId,
             LocalDate workDate
     );
+    List<AttendanceDailySummaryEntity>
+    findAllByWorkDateBetween(
+            LocalDate from,
+            LocalDate to
+    );
+
 }
 

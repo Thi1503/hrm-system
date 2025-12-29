@@ -1,6 +1,7 @@
 package com.hrm.attendanceservice.controller;
 
 import com.hrm.attendanceservice.dto.response.HrAttendanceByDateResponse;
+import com.hrm.attendanceservice.dto.response.HrAttendanceByMonthResponse;
 import com.hrm.attendanceservice.service.AttendanceHrService;
 import com.hrm.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,5 +34,16 @@ public class AttendanceHrController {
                 service.getByDate(date, employeeId)
         );
     }
+
+    @GetMapping("/by-month")
+    BaseResponse<List<HrAttendanceByMonthResponse>> byMonth(
+            @RequestParam String month,
+            @RequestParam(required = false) Long employeeId
+    ) {
+        return BaseResponse.success(
+                service.getByMonth(month, employeeId)
+        );
+    }
+
 }
 

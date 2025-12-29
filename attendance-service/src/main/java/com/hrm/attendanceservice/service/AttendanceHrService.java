@@ -1,6 +1,7 @@
 package com.hrm.attendanceservice.service;
 
 import com.hrm.attendanceservice.dto.response.HrAttendanceByDateResponse;
+import com.hrm.attendanceservice.dto.response.HrAttendanceByMonthResponse;
 import com.hrm.attendanceservice.entity.AttendanceDailySummaryEntity;
 import com.hrm.attendanceservice.repository.AttendanceDailySummaryRepository;
 import lombok.AccessLevel;
@@ -42,5 +43,32 @@ public class AttendanceHrService {
                 )
                 .toList();
     }
+
+    public List<HrAttendanceByMonthResponse> getByMonth(
+            String month,
+            Long employeeId
+    ) {
+        LocalDate from = LocalDate.parse(month + "-01");
+        LocalDate to = from.withDayOfMonth(from.lengthOfMonth());
+
+        List<AttendanceDailySummaryEntity> list =
+                employeeId == null
+                        ? summaryRepository.findAllByWorkDateBetween(from, to)
+                        : summaryRepository.findAllByEmployeeIdAndWorkDateBetween(
+                        employeeId, from, to);
+
+        return list.stream()
+                .map(s -> HrAttendanceByMonthResponse.builder()
+                        .employeeId(s.getEmployeeId())
+                        .workDate(s.getWorkDate())
+                        .status(s.getStatus())
+                        .workMinutes(s.getWorkMinutes())
+                        .lateMinutes(s.getLateMinutes())
+                        .earlyMinutes(s.getEarlyMinutes())
+                        .build()
+                )
+                .toList();
+    }
+
 }
 
