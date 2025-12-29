@@ -101,10 +101,10 @@ Có đơn nghỉ, OT, giải trình, duyệt 2 cấp
 
 🔐 Tài khoản test
 Username	Password
-admin	admin123
-hr	hr123
-manager	manager123
-employee	employee123
+admin	admin@123
+hr	hr@123
+manager	manager@123
+employee	employee@123
 🌐 API Endpoints (mặc định)
 Service	URL
 Identity	http://localhost:8080
