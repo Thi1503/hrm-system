@@ -2,6 +2,7 @@ package com.hrm.attendanceservice.service;
 
 import com.hrm.attendanceservice.dto.request.AttendanceCheckInRequest;
 import com.hrm.attendanceservice.dto.request.AttendanceCheckOutRequest;
+import com.hrm.attendanceservice.dto.response.MyMonthAttendanceItemResponse;
 import com.hrm.attendanceservice.dto.response.MyTodayAttendanceResponse;
 import com.hrm.attendanceservice.entity.*;
 import com.hrm.attendanceservice.repository.*;
@@ -196,5 +197,30 @@ public class AttendanceService {
                                 .build()
                 );
     }
+
+
+    public List<MyMonthAttendanceItemResponse> getMyMonth(
+            String userId,
+            String month) {
+
+        Long employeeId = Long.valueOf(userId);
+
+        LocalDate from = LocalDate.parse(month + "-01");
+        LocalDate to = from.withDayOfMonth(from.lengthOfMonth());
+
+        return summaryRepository
+                .findAllByEmployeeIdAndWorkDateBetween(employeeId, from, to)
+                .stream()
+                .map(s -> MyMonthAttendanceItemResponse.builder()
+                        .workDate(s.getWorkDate())
+                        .status(s.getStatus())
+                        .workMinutes(s.getWorkMinutes())
+                        .lateMinutes(s.getLateMinutes())
+                        .earlyMinutes(s.getEarlyMinutes())
+                        .build()
+                )
+                .toList();
+    }
+
 
 }
