@@ -19,5 +19,22 @@ public interface AttendanceDailySummaryRepository
             LocalDate from,
             LocalDate to
     );
+
+    /* ================== ADD THÊM ================== */
+
+    List<AttendanceDailySummaryEntity>
+    findAllByWorkDate(LocalDate workDate);
+
+    List<AttendanceDailySummaryEntity>
+    findAllByEmployeeIdAndWorkDate(
+            Long employeeId,
+            LocalDate workDate
+    );
+    List<AttendanceDailySummaryEntity>
+    findAllByWorkDateBetween(
+            LocalDate from,
+            LocalDate to
+    );
+
 }
 
