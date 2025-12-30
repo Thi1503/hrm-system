@@ -1,27 +1,20 @@
 package com.hrm.requestapprovalservice.dto.request;
 
+import com.hrm.requestapprovalservice.enums.RemoteWorkType;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CreateOtRequest {
+public class UpdateRemoteRequest {
 
     @NotNull
-    LocalDate otDate;
-
-    @NotNull
-    LocalTime startTime;
-
-    @NotNull
-    LocalTime endTime;
+    RemoteWorkType workType;
 
     String reason;
 }
