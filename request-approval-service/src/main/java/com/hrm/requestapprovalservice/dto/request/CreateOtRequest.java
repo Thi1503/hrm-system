@@ -1,29 +1,28 @@
 package com.hrm.requestapprovalservice.dto.request;
 
-import com.hrm.requestapprovalservice.enums.LeaveType;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class UpdateLeaveRequest {
+public class CreateOtRequest {
 
     @NotNull
-    LeaveType leaveType;
+    LocalDate otDate;
 
     @NotNull
-    LocalDate fromDate;
+    LocalTime startTime;
 
     @NotNull
-    LocalDate toDate;
+    LocalTime endTime;
 
     String reason;
-    String attachmentUrl;
 }

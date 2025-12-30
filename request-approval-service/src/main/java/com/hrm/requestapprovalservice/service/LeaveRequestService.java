@@ -16,7 +16,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 @Service
@@ -51,13 +54,18 @@ public class LeaveRequestService {
             );
         }
 
+        BigDecimal totalDays = calculateTotalDays(
+                request.getFromDate(),
+                request.getToDate()
+        );
+
         LeaveRequestEntity entity =
                 LeaveRequestEntity.builder()
                         .employeeId(empId)
                         .leaveType(request.getLeaveType())
                         .fromDate(request.getFromDate())
                         .toDate(request.getToDate())
-                        .totalDays(request.getTotalDays())
+                        .totalDays(totalDays)
                         .reason(request.getReason())
                         .attachmentUrl(request.getAttachmentUrl())
                         .status(ApprovalStatus.PENDING_MANAGER)
@@ -97,10 +105,15 @@ public class LeaveRequestService {
             );
         }
 
+        BigDecimal totalDays = calculateTotalDays(
+                request.getFromDate(),
+                request.getToDate()
+        );
+
         entity.setLeaveType(request.getLeaveType());
         entity.setFromDate(request.getFromDate());
         entity.setToDate(request.getToDate());
-        entity.setTotalDays(request.getTotalDays());
+        entity.setTotalDays(totalDays);
         entity.setReason(request.getReason());
         entity.setAttachmentUrl(request.getAttachmentUrl());
         entity.setUpdatedAt(LocalDateTime.now());
@@ -173,4 +186,17 @@ public class LeaveRequestService {
 
         return entity;
     }
+
+    private BigDecimal calculateTotalDays(LocalDate from, LocalDate to) {
+        if (to.isBefore(from)) {
+            throw new BusinessException(
+                    ErrorCode.INVALID_REQUEST,
+                    "Ngày kết thúc phải sau hoặc bằng ngày bắt đầu"
+            );
+        }
+
+        long days = ChronoUnit.DAYS.between(from, to) + 1;
+        return BigDecimal.valueOf(days);
+    }
+
 }
