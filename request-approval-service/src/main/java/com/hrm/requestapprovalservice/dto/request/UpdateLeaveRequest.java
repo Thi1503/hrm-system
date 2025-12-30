@@ -24,9 +24,6 @@ public class UpdateLeaveRequest {
     @NotNull
     LocalDate toDate;
 
-    @NotNull
-    BigDecimal totalDays;
-
     String reason;
     String attachmentUrl;
 }
