@@ -6,7 +6,7 @@ import com.hrm.employeeservice.dto.request.EmployeeCreateRequest;
 import com.hrm.employeeservice.dto.request.EmployeeSearchRequest;
 import com.hrm.employeeservice.dto.request.EmployeeUpdateRequest;
 import com.hrm.employeeservice.dto.request.UpdateMyInfoRequest;
-import com.hrm.employeeservice.dto.response.EmployeeInfoResponse;
+import com.hrm.employeeservice.dto.response.internalResponse.EmployeeInfoResponse;
 import com.hrm.employeeservice.dto.response.EmployeeItemResponse;
 import com.hrm.employeeservice.dto.response.EmployeeResponse;
 import com.hrm.employeeservice.entity.Department;
@@ -22,9 +22,7 @@ import jakarta.transaction.Transactional;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -229,20 +227,6 @@ public class EmployeeService {
                         PageRequest.of(page, size)
                 ).map(employeeMapper::toItemResponse)
                 .toList();
-    }
-
-    public EmployeeInfoResponse getByAccountId(String accountId) {
-        Employee employee = employeeRepository
-                .findByAccountId(accountId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND, "Không tìm thấy nhân viên"));
-
-        return EmployeeInfoResponse.builder()
-                .employeeId(employee.getId())
-                .fullName(employee.getFullName())
-                .departmentId(employee.getDepartment().getId())
-                .departmentName(employee.getDepartment().getName())
-                .positionName(employee.getPosition().getName())
-                .build();
     }
 
     @Transactional

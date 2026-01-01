@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
         url = "${employee.service.url}"
 )
 public interface EmployeeClient {
-    @PostMapping("/employees/internal/by-account-id")
+    @PostMapping("/internal/by-account-id")
     BaseResponse<EmployeeInfoResponse> getByAccountId(
             @RequestBody AccountIdRequest request
     );

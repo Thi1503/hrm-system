@@ -1,4 +1,4 @@
-package com.hrm.employeeservice.dto.request;
+package com.hrm.employeeservice.dto.request.internalRequest;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
