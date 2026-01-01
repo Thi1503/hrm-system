@@ -1,11 +1,9 @@
 package com.hrm.attendanceservice.controller;
 
-import com.hrm.attendanceservice.dto.request.AssignShiftRequest;
-import com.hrm.attendanceservice.dto.request.AttendanceApproveLocationRequest;
-import com.hrm.attendanceservice.dto.request.AttendanceManualAdjustRequest;
-import com.hrm.attendanceservice.dto.request.RecalculateAttendanceRequest;
+import com.hrm.attendanceservice.dto.request.*;
 import com.hrm.attendanceservice.dto.response.HrAttendanceByDateResponse;
 import com.hrm.attendanceservice.dto.response.HrAttendanceByMonthResponse;
+import com.hrm.attendanceservice.dto.response.MyMonthAttendanceItemResponse;
 import com.hrm.attendanceservice.service.AttendanceHrService;
 import com.hrm.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -78,6 +76,19 @@ public class AttendanceHrController {
         service.recalculate(request);
         return BaseResponse.success(null);
     }
+
+    @PostMapping("/get-employee-month")
+    public BaseResponse<List<MyMonthAttendanceItemResponse>> getEmployeeMonth(
+            @RequestBody AttendanceMonthRequest request
+    ) {
+        return BaseResponse.success(
+                service.getEmployeeMonth(
+                        request.getEmployeeId(),
+                        request.getYearMonth()
+                )
+        );
+    }
+
 
 }
 

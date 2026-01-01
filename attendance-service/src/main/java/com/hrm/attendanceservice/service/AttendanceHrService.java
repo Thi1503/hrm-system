@@ -6,6 +6,7 @@ import com.hrm.attendanceservice.dto.request.AttendanceManualAdjustRequest;
 import com.hrm.attendanceservice.dto.request.RecalculateAttendanceRequest;
 import com.hrm.attendanceservice.dto.response.HrAttendanceByDateResponse;
 import com.hrm.attendanceservice.dto.response.HrAttendanceByMonthResponse;
+import com.hrm.attendanceservice.dto.response.MyMonthAttendanceItemResponse;
 import com.hrm.attendanceservice.entity.AttendanceDailySummaryEntity;
 import com.hrm.attendanceservice.entity.AttendanceLogEntity;
 import com.hrm.attendanceservice.entity.AttendanceShiftEntity;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 
 @Service
@@ -221,6 +223,45 @@ public class AttendanceHrService {
         summaryRepository.save(summary);
     }
 
+    public List<MyMonthAttendanceItemResponse> getEmployeeMonth(
+            Long employeeId,
+            String yearMonth) {
+
+        if (employeeId == null) {
+            throw new BusinessException(
+                    ErrorCode.INVALID_REQUEST,
+                    "employeeId không được để trống"
+            );
+        }
+
+        YearMonth ym;
+        try {
+            ym = YearMonth.parse(yearMonth); // yyyy-MM
+        } catch (Exception e) {
+            throw new BusinessException(
+                    ErrorCode.INVALID_REQUEST,
+                    "Thời gian truyền vào phải có dạng yyyy-MM"
+            );
+        }
+
+        LocalDate from = ym.atDay(1);
+        LocalDate to = ym.atEndOfMonth();
+
+        return summaryRepository
+                .findAllByEmployeeIdAndWorkDateBetween(employeeId, from, to)
+                .stream()
+                .map(s -> MyMonthAttendanceItemResponse.builder()
+                        .workDate(s.getWorkDate())
+                        .status(s.getStatus())
+                        .checkInTime(s.getCheckInTime())
+                        .checkOutTime(s.getCheckOutTime())
+                        .workMinutes(s.getWorkMinutes())
+                        .lateMinutes(s.getLateMinutes())
+                        .earlyMinutes(s.getEarlyMinutes())
+                        .build()
+                )
+                .toList();
+    }
 
 
 }
