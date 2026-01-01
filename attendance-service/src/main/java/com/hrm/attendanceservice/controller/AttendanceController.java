@@ -56,12 +56,13 @@ public class AttendanceController {
     @GetMapping("/my-month")
     BaseResponse<List<MyMonthAttendanceItemResponse>> myMonth(
             @RequestHeader("X-User-Id") String userId,
-            @RequestParam("month") String month) {
-
+            @RequestParam("yearMonth") String yearMonth // VD: 2025-01
+    ) {
         return BaseResponse.success(
-                attendanceService.getMyMonth(userId, month)
+                attendanceService.getMyMonth(userId, yearMonth)
         );
     }
+
 
     @GetMapping("/my-logs")
     BaseResponse<List<MyAttendanceLogResponse>> myLogs(

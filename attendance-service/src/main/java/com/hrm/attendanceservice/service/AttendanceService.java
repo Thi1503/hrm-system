@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 
 @Service
@@ -241,12 +242,19 @@ public class AttendanceService {
 
     public List<MyMonthAttendanceItemResponse> getMyMonth(
             String userId,
-            String month) {
+            String yearMonth) {
 
         Long employeeId = Long.valueOf(userId);
 
-        LocalDate from = LocalDate.parse(month + "-01");
-        LocalDate to = from.withDayOfMonth(from.lengthOfMonth());
+        YearMonth ym;
+        try {
+            ym = YearMonth.parse(yearMonth); // ISO: yyyy-MM
+        } catch (Exception e) {
+            throw new BusinessException(ErrorCode.INVALID_REQUEST, "Thời gian truyền vào phải có dạng yyyy-MM");
+        }
+
+        LocalDate from = ym.atDay(1);
+        LocalDate to = ym.atEndOfMonth();
 
         return summaryRepository
                 .findAllByEmployeeIdAndWorkDateBetween(employeeId, from, to)
@@ -254,6 +262,8 @@ public class AttendanceService {
                 .map(s -> MyMonthAttendanceItemResponse.builder()
                         .workDate(s.getWorkDate())
                         .status(s.getStatus())
+                        .checkInTime(s.getCheckInTime())
+                        .checkOutTime(s.getCheckOutTime())
                         .workMinutes(s.getWorkMinutes())
                         .lateMinutes(s.getLateMinutes())
                         .earlyMinutes(s.getEarlyMinutes())
@@ -261,6 +271,7 @@ public class AttendanceService {
                 )
                 .toList();
     }
+
 
     public List<MyAttendanceLogResponse> getMyLogs(
             String userId,

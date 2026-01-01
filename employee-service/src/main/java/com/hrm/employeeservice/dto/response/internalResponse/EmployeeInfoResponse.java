@@ -1,4 +1,4 @@
-package com.hrm.employeeservice.dto.response;
+package com.hrm.employeeservice.dto.response.internalResponse;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

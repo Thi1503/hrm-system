@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -16,6 +17,8 @@ public class MyMonthAttendanceItemResponse {
 
     LocalDate workDate;
     AttendanceStatus status;
+    LocalDateTime checkInTime;
+    LocalDateTime checkOutTime;
     Integer workMinutes;
     Integer lateMinutes;
     Integer earlyMinutes;
