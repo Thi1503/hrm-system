@@ -1,4 +1,4 @@
-package com.hrm.requestapprovalservice.dto.response;
+package com.hrm.requestapprovalservice.dto.response.manager;
 
 import com.hrm.requestapprovalservice.enums.ApprovalStatus;
 import lombok.*;

@@ -3,8 +3,10 @@ package com.hrm.employeeservice.service;
 import com.hrm.common.enums.ErrorCode;
 import com.hrm.common.exception.BusinessException;
 import com.hrm.employeeservice.dto.response.internalResponse.EmployeeInfoResponse;
+import com.hrm.employeeservice.dto.response.internalResponse.EmployeeInternalItemResponse;
 import com.hrm.employeeservice.dto.response.internalResponse.EmployeeSimpleResponse;
 import com.hrm.employeeservice.entity.Employee;
+import com.hrm.employeeservice.entity.EmploymentStatus;
 import com.hrm.employeeservice.mapper.EmployeeMapper;
 import com.hrm.employeeservice.repository.DepartmentRepository;
 import com.hrm.employeeservice.repository.EmployeeRepository;
@@ -45,5 +47,14 @@ public class EmployeeInternalService {
     public List<EmployeeSimpleResponse> getEmployeesByManager(Long managerId) {
         return employeeRepository.findSimpleByManagerId(managerId);
     }
+
+    public List<EmployeeInternalItemResponse> getAllActiveInternal() {
+        return employeeRepository
+                .findByEmploymentStatus(EmploymentStatus.ACTIVE)
+                .stream()
+                .map(employeeMapper::toInternalItem)
+                .toList();
+    }
+
 
 }
