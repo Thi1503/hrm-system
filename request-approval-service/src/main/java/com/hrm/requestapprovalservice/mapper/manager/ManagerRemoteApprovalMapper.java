@@ -1,5 +1,5 @@
-package com.hrm.requestapprovalservice.mapper;
-import com.hrm.requestapprovalservice.dto.response.ManagerRemoteApprovalResponse;
+package com.hrm.requestapprovalservice.mapper.manager;
+import com.hrm.requestapprovalservice.dto.response.manager.ManagerRemoteApprovalResponse;
 import com.hrm.requestapprovalservice.entity.RemoteRequestEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
