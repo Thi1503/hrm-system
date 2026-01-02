@@ -17,4 +17,10 @@ public interface OtRequestRepository
             LocalDate otDate,
             ApprovalStatus status
     );
+
+    List<OtRequestEntity>
+    findByEmployeeIdInAndStatus(
+            List<Long> employeeIds,
+            ApprovalStatus status
+    );
 }

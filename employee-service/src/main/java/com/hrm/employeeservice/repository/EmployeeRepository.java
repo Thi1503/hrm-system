@@ -1,5 +1,6 @@
 package com.hrm.employeeservice.repository;
 
+import com.hrm.employeeservice.dto.response.internalResponse.EmployeeSimpleResponse;
 import com.hrm.employeeservice.entity.Employee;
 import com.hrm.employeeservice.entity.EmploymentStatus;
 
@@ -39,6 +40,16 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
             @Param("managerId") Long managerId,
             Pageable pageable
     );
+
+
+        @Query("""
+        select new com.hrm.employeeservice.dto.response.internalResponse.EmployeeSimpleResponse(
+            e.id, e.fullName
+        )
+        from Employee e
+        where e.manager.id = :managerId
+    """)
+        List<EmployeeSimpleResponse> findSimpleByManagerId(@Param("managerId") Long managerId);
 
 }
 
