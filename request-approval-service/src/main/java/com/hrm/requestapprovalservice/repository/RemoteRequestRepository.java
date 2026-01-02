@@ -17,6 +17,12 @@ public interface RemoteRequestRepository
             LocalDate remoteDate,
             ApprovalStatus status
     );
+
+    List<RemoteRequestEntity>
+    findByEmployeeIdInAndStatus(
+            List<Long> employeeIds,
+            ApprovalStatus status
+    );
 }
 
 

@@ -18,4 +18,10 @@ public interface LeaveRequestRepository
             LocalDate toDate,
             LocalDate fromDate
     );
+
+    List<LeaveRequestEntity>
+    findByEmployeeIdInAndStatus(
+            List<Long> employeeIds,
+            ApprovalStatus status
+    );
 }

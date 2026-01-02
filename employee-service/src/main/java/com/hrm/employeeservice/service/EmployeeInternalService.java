@@ -3,6 +3,7 @@ package com.hrm.employeeservice.service;
 import com.hrm.common.enums.ErrorCode;
 import com.hrm.common.exception.BusinessException;
 import com.hrm.employeeservice.dto.response.internalResponse.EmployeeInfoResponse;
+import com.hrm.employeeservice.dto.response.internalResponse.EmployeeSimpleResponse;
 import com.hrm.employeeservice.entity.Employee;
 import com.hrm.employeeservice.mapper.EmployeeMapper;
 import com.hrm.employeeservice.repository.DepartmentRepository;
@@ -13,6 +14,8 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -38,4 +41,9 @@ public class EmployeeInternalService {
                 .positionName(employee.getPosition().getName())
                 .build();
     }
+
+    public List<EmployeeSimpleResponse> getEmployeesByManager(Long managerId) {
+        return employeeRepository.findSimpleByManagerId(managerId);
+    }
+
 }
