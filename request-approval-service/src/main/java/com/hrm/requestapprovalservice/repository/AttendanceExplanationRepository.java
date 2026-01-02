@@ -17,4 +17,10 @@ public interface AttendanceExplanationRepository
             LocalDate workDate,
             ApprovalStatus status
     );
+
+    List<AttendanceExplanationEntity>
+    findByEmployeeIdInAndStatus(
+            List<Long> employeeIds,
+            ApprovalStatus status
+    );
 }
