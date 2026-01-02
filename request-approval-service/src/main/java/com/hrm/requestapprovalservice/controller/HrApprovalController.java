@@ -2,6 +2,9 @@ package com.hrm.requestapprovalservice.controller;
 
 import com.hrm.common.response.BaseResponse;
 import com.hrm.requestapprovalservice.dto.response.hr.HrExplanationApprovalResponse;
+import com.hrm.requestapprovalservice.dto.response.hr.HrLeaveApprovalResponse;
+import com.hrm.requestapprovalservice.dto.response.hr.HrOtApprovalResponse;
+import com.hrm.requestapprovalservice.dto.response.hr.HrRemoteApprovalResponse;
 import com.hrm.requestapprovalservice.service.HrApprovalService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
@@ -27,4 +30,21 @@ public class HrApprovalController {
                 hrApprovalService.getPendingExplanations()
         );
     }
+
+    @GetMapping("/leaves")
+    public BaseResponse<List<HrLeaveApprovalResponse>> getLeaves() {
+        return BaseResponse.success(hrApprovalService.getPendingLeavesForHr());
+    }
+
+    @GetMapping("/ots")
+    public BaseResponse<List<HrOtApprovalResponse>> getOts() {
+        return BaseResponse.success(hrApprovalService.getPendingOtsForHr());
+    }
+
+    @GetMapping("/remotes")
+    public BaseResponse<List<HrRemoteApprovalResponse>> getRemotes() {
+        return BaseResponse.success(hrApprovalService.getPendingRemotesForHr());
+    }
+
+
 }
