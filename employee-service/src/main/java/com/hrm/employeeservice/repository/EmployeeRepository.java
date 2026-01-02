@@ -51,5 +51,7 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     """)
         List<EmployeeSimpleResponse> findSimpleByManagerId(@Param("managerId") Long managerId);
 
+    List<Employee> findByEmploymentStatus(EmploymentStatus status);
+
 }
 

@@ -1,6 +1,6 @@
-package com.hrm.requestapprovalservice.mapper;
+package com.hrm.requestapprovalservice.mapper.manager;
 
-import com.hrm.requestapprovalservice.dto.response.ManagerOtApprovalResponse;
+import com.hrm.requestapprovalservice.dto.response.manager.ManagerOtApprovalResponse;
 import com.hrm.requestapprovalservice.entity.OtRequestEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

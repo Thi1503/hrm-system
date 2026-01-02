@@ -1,10 +1,10 @@
 package com.hrm.requestapprovalservice.controller;
 
 import com.hrm.common.response.BaseResponse;
-import com.hrm.requestapprovalservice.dto.response.ManagerExplanationApprovalResponse;
-import com.hrm.requestapprovalservice.dto.response.ManagerLeaveApprovalResponse;
-import com.hrm.requestapprovalservice.dto.response.ManagerOtApprovalResponse;
-import com.hrm.requestapprovalservice.dto.response.ManagerRemoteApprovalResponse;
+import com.hrm.requestapprovalservice.dto.response.manager.ManagerExplanationApprovalResponse;
+import com.hrm.requestapprovalservice.dto.response.manager.ManagerLeaveApprovalResponse;
+import com.hrm.requestapprovalservice.dto.response.manager.ManagerOtApprovalResponse;
+import com.hrm.requestapprovalservice.dto.response.manager.ManagerRemoteApprovalResponse;
 import com.hrm.requestapprovalservice.service.ManagerApprovalService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;

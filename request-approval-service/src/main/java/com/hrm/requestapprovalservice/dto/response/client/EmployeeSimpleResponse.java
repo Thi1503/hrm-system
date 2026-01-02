@@ -1,4 +1,4 @@
-package com.hrm.requestapprovalservice.dto.request;
+package com.hrm.requestapprovalservice.dto.response.client;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

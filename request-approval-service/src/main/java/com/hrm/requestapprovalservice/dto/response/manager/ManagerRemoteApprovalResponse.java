@@ -1,7 +1,7 @@
-package com.hrm.requestapprovalservice.dto.response;
+package com.hrm.requestapprovalservice.dto.response.manager;
 
 import com.hrm.requestapprovalservice.enums.ApprovalStatus;
-import com.hrm.requestapprovalservice.enums.LeaveType;
+import com.hrm.requestapprovalservice.enums.RemoteWorkType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,16 +12,15 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ManagerLeaveApprovalResponse {
+public class ManagerRemoteApprovalResponse {
 
     Long requestId;
 
     Long employeeId;
     String employeeName;
 
-    LeaveType leaveType;
-    LocalDate fromDate;
-    LocalDate toDate;
+    LocalDate remoteDate;
+    RemoteWorkType workType;
 
     String reason;
 
