@@ -1,6 +1,7 @@
 package com.hrm.requestapprovalservice.controller;
 
 import com.hrm.common.response.BaseResponse;
+import com.hrm.requestapprovalservice.dto.request.ApproveApprovalRequest;
 import com.hrm.requestapprovalservice.dto.response.manager.ManagerExplanationApprovalResponse;
 import com.hrm.requestapprovalservice.dto.response.manager.ManagerLeaveApprovalResponse;
 import com.hrm.requestapprovalservice.dto.response.manager.ManagerOtApprovalResponse;
@@ -59,6 +60,14 @@ public class ManagerApprovalController {
         );
     }
 
+    @PostMapping("/approve")
+    public BaseResponse<Void> approve(
+            @RequestHeader("X-User-Id") Long managerId,
+            @RequestBody ApproveApprovalRequest request) {
+
+        managerApprovalService.approve(managerId, request);
+        return BaseResponse.success(null);
+    }
 
 
 }
