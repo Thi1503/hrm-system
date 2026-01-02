@@ -4,9 +4,14 @@ package com.hrm.requestapprovalservice.service;
 import com.hrm.requestapprovalservice.client.EmployeeClient;
 import com.hrm.requestapprovalservice.dto.request.EmployeeSimpleResponse;
 import com.hrm.requestapprovalservice.dto.response.ManagerExplanationApprovalResponse;
+import com.hrm.requestapprovalservice.dto.response.ManagerLeaveApprovalResponse;
 import com.hrm.requestapprovalservice.entity.AttendanceExplanationEntity;
+import com.hrm.requestapprovalservice.entity.LeaveRequestEntity;
 import com.hrm.requestapprovalservice.enums.ApprovalStatus;
+import com.hrm.requestapprovalservice.mapper.ManagerExplanationApprovalMapper;
+import com.hrm.requestapprovalservice.mapper.ManagerLeaveApprovalMapper;
 import com.hrm.requestapprovalservice.repository.AttendanceExplanationRepository;
+import com.hrm.requestapprovalservice.repository.LeaveRequestRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,6 +27,9 @@ public class ManagerApprovalService {
 
     EmployeeClient employeeClient;
     AttendanceExplanationRepository explanationRepository;
+    ManagerExplanationApprovalMapper managerExplanationApprovalMapper;
+    LeaveRequestRepository leaveRequestRepository;
+    ManagerLeaveApprovalMapper leaveApprovalMapper;
 
     public List<ManagerExplanationApprovalResponse>
     getPendingExplanationsForManager(Long managerId) {
@@ -53,17 +61,57 @@ public class ManagerApprovalService {
 
         // 4️⃣ Map response + ghép tên
         return entities.stream()
-                .map(e -> ManagerExplanationApprovalResponse.builder()
-                        .requestId(e.getId())
-                        .employeeId(e.getEmployeeId())
-                        .employeeName(employeeNameMap.get(e.getEmployeeId()))
-                        .workDate(e.getWorkDate())
-                        .explanationType(e.getExplanationType())
-                        .reason(e.getReason())
-                        .status(e.getStatus())
-                        .build()
-                )
+                .map(e -> {
+                    ManagerExplanationApprovalResponse res =
+                            managerExplanationApprovalMapper.toResponse(e);
+                    res.setEmployeeName(
+                            employeeNameMap.get(e.getEmployeeId())
+                    );
+                    return res;
+                })
+                .toList();
+
+    }
+
+    public List<ManagerLeaveApprovalResponse>
+    getPendingLeavesForManager(Long managerId) {
+
+        Map<Long, String> employeeMap = getEmployeeMap(managerId);
+        if (employeeMap.isEmpty()) return List.of();
+
+        List<LeaveRequestEntity> entities =
+                leaveRequestRepository.findByEmployeeIdInAndStatus(
+                        employeeMap.keySet().stream().toList(),
+                        ApprovalStatus.PENDING_MANAGER
+                );
+
+        return entities.stream()
+                .map(e -> {
+                    ManagerLeaveApprovalResponse res =
+                            leaveApprovalMapper.toResponse(e);
+                    res.setEmployeeName(employeeMap.get(e.getEmployeeId()));
+                    return res;
+                })
                 .toList();
     }
+
+
+    private Map<Long, String> getEmployeeMap(Long managerId) {
+
+        // Call employee-service
+        var response = employeeClient.getByManager(managerId);
+
+        if (response == null || response.getData() == null) {
+            return Map.of();
+        }
+
+        return response.getData()
+                .stream()
+                .collect(Collectors.toMap(
+                        EmployeeSimpleResponse::getId,
+                        EmployeeSimpleResponse::getFullName
+                ));
+    }
+
 }
 

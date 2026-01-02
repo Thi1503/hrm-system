@@ -2,6 +2,7 @@ package com.hrm.requestapprovalservice.controller;
 
 import com.hrm.common.response.BaseResponse;
 import com.hrm.requestapprovalservice.dto.response.ManagerExplanationApprovalResponse;
+import com.hrm.requestapprovalservice.dto.response.ManagerLeaveApprovalResponse;
 import com.hrm.requestapprovalservice.service.ManagerApprovalService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
@@ -28,4 +29,14 @@ public class ManagerApprovalController {
                 managerApprovalService.getPendingExplanationsForManager(managerId)
         );
     }
+
+    @GetMapping("/leaves")
+    public BaseResponse<List<ManagerLeaveApprovalResponse>> getLeaves(
+            @RequestHeader("X-User-Id") Long managerId
+    ) {
+        return BaseResponse.success(
+                managerApprovalService.getPendingLeavesForManager(managerId)
+        );
+    }
+
 }
