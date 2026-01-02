@@ -5,13 +5,17 @@ import com.hrm.requestapprovalservice.client.EmployeeClient;
 import com.hrm.requestapprovalservice.dto.request.EmployeeSimpleResponse;
 import com.hrm.requestapprovalservice.dto.response.ManagerExplanationApprovalResponse;
 import com.hrm.requestapprovalservice.dto.response.ManagerLeaveApprovalResponse;
+import com.hrm.requestapprovalservice.dto.response.ManagerOtApprovalResponse;
 import com.hrm.requestapprovalservice.entity.AttendanceExplanationEntity;
 import com.hrm.requestapprovalservice.entity.LeaveRequestEntity;
+import com.hrm.requestapprovalservice.entity.OtRequestEntity;
 import com.hrm.requestapprovalservice.enums.ApprovalStatus;
 import com.hrm.requestapprovalservice.mapper.ManagerExplanationApprovalMapper;
 import com.hrm.requestapprovalservice.mapper.ManagerLeaveApprovalMapper;
+import com.hrm.requestapprovalservice.mapper.ManagerOtApprovalMapper;
 import com.hrm.requestapprovalservice.repository.AttendanceExplanationRepository;
 import com.hrm.requestapprovalservice.repository.LeaveRequestRepository;
+import com.hrm.requestapprovalservice.repository.OtRequestRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -26,10 +30,15 @@ import java.util.stream.Collectors;
 public class ManagerApprovalService {
 
     EmployeeClient employeeClient;
-    AttendanceExplanationRepository explanationRepository;
     ManagerExplanationApprovalMapper managerExplanationApprovalMapper;
-    LeaveRequestRepository leaveRequestRepository;
     ManagerLeaveApprovalMapper leaveApprovalMapper;
+    ManagerOtApprovalMapper otApprovalMapper;
+
+    AttendanceExplanationRepository explanationRepository;
+    LeaveRequestRepository leaveRequestRepository;
+    OtRequestRepository otRequestRepository;
+
+
 
     public List<ManagerExplanationApprovalResponse>
     getPendingExplanationsForManager(Long managerId) {
@@ -94,6 +103,29 @@ public class ManagerApprovalService {
                 })
                 .toList();
     }
+
+    public List<ManagerOtApprovalResponse>
+    getPendingOtsForManager(Long managerId) {
+
+        Map<Long, String> employeeMap = getEmployeeMap(managerId);
+        if (employeeMap.isEmpty()) return List.of();
+
+        List<OtRequestEntity> entities =
+                otRequestRepository.findByEmployeeIdInAndStatus(
+                        employeeMap.keySet().stream().toList(),
+                        ApprovalStatus.PENDING_MANAGER
+                );
+
+        return entities.stream()
+                .map(e -> {
+                    ManagerOtApprovalResponse res =
+                            otApprovalMapper.toResponse(e);
+                    res.setEmployeeName(employeeMap.get(e.getEmployeeId()));
+                    return res;
+                })
+                .toList();
+    }
+
 
 
     private Map<Long, String> getEmployeeMap(Long managerId) {
