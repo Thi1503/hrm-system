@@ -4,6 +4,7 @@ import com.hrm.common.response.BaseResponse;
 import com.hrm.requestapprovalservice.dto.response.ManagerExplanationApprovalResponse;
 import com.hrm.requestapprovalservice.dto.response.ManagerLeaveApprovalResponse;
 import com.hrm.requestapprovalservice.dto.response.ManagerOtApprovalResponse;
+import com.hrm.requestapprovalservice.dto.response.ManagerRemoteApprovalResponse;
 import com.hrm.requestapprovalservice.service.ManagerApprovalService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AccessLevel;
@@ -48,6 +49,16 @@ public class ManagerApprovalController {
                 managerApprovalService.getPendingOtsForManager(managerId)
         );
     }
+
+    @GetMapping("/remotes")
+    public BaseResponse<List<ManagerRemoteApprovalResponse>> getRemotes(
+            @RequestHeader("X-User-Id") Long managerId
+    ) {
+        return BaseResponse.success(
+                managerApprovalService.getPendingRemotesForManager(managerId)
+        );
+    }
+
 
 
 }

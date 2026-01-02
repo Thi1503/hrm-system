@@ -6,16 +6,20 @@ import com.hrm.requestapprovalservice.dto.request.EmployeeSimpleResponse;
 import com.hrm.requestapprovalservice.dto.response.ManagerExplanationApprovalResponse;
 import com.hrm.requestapprovalservice.dto.response.ManagerLeaveApprovalResponse;
 import com.hrm.requestapprovalservice.dto.response.ManagerOtApprovalResponse;
+import com.hrm.requestapprovalservice.dto.response.ManagerRemoteApprovalResponse;
 import com.hrm.requestapprovalservice.entity.AttendanceExplanationEntity;
 import com.hrm.requestapprovalservice.entity.LeaveRequestEntity;
 import com.hrm.requestapprovalservice.entity.OtRequestEntity;
+import com.hrm.requestapprovalservice.entity.RemoteRequestEntity;
 import com.hrm.requestapprovalservice.enums.ApprovalStatus;
 import com.hrm.requestapprovalservice.mapper.ManagerExplanationApprovalMapper;
 import com.hrm.requestapprovalservice.mapper.ManagerLeaveApprovalMapper;
 import com.hrm.requestapprovalservice.mapper.ManagerOtApprovalMapper;
+import com.hrm.requestapprovalservice.mapper.ManagerRemoteApprovalMapper;
 import com.hrm.requestapprovalservice.repository.AttendanceExplanationRepository;
 import com.hrm.requestapprovalservice.repository.LeaveRequestRepository;
 import com.hrm.requestapprovalservice.repository.OtRequestRepository;
+import com.hrm.requestapprovalservice.repository.RemoteRequestRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -30,13 +34,15 @@ import java.util.stream.Collectors;
 public class ManagerApprovalService {
 
     EmployeeClient employeeClient;
-    ManagerExplanationApprovalMapper managerExplanationApprovalMapper;
+    ManagerExplanationApprovalMapper explanationApprovalMapper;
     ManagerLeaveApprovalMapper leaveApprovalMapper;
     ManagerOtApprovalMapper otApprovalMapper;
+    ManagerRemoteApprovalMapper remoteApprovalMapper;
 
     AttendanceExplanationRepository explanationRepository;
     LeaveRequestRepository leaveRequestRepository;
     OtRequestRepository otRequestRepository;
+    RemoteRequestRepository remoteRequestRepository;
 
 
 
@@ -72,7 +78,7 @@ public class ManagerApprovalService {
         return entities.stream()
                 .map(e -> {
                     ManagerExplanationApprovalResponse res =
-                            managerExplanationApprovalMapper.toResponse(e);
+                            explanationApprovalMapper.toResponse(e);
                     res.setEmployeeName(
                             employeeNameMap.get(e.getEmployeeId())
                     );
@@ -144,6 +150,29 @@ public class ManagerApprovalService {
                         EmployeeSimpleResponse::getFullName
                 ));
     }
+
+    public List<ManagerRemoteApprovalResponse>
+    getPendingRemotesForManager(Long managerId) {
+
+        Map<Long, String> employeeMap = getEmployeeMap(managerId);
+        if (employeeMap.isEmpty()) return List.of();
+
+        List<RemoteRequestEntity> entities =
+                remoteRequestRepository.findByEmployeeIdInAndStatus(
+                        employeeMap.keySet().stream().toList(),
+                        ApprovalStatus.PENDING_MANAGER
+                );
+
+        return entities.stream()
+                .map(e -> {
+                    ManagerRemoteApprovalResponse res =
+                            remoteApprovalMapper.toResponse(e);
+                    res.setEmployeeName(employeeMap.get(e.getEmployeeId()));
+                    return res;
+                })
+                .toList();
+    }
+
 
 }
 
