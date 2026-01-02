@@ -3,6 +3,7 @@ package com.hrm.employeeservice.controller;
 import com.hrm.common.response.BaseResponse;
 import com.hrm.employeeservice.dto.request.internalRequest.AccountIdRequest;
 import com.hrm.employeeservice.dto.response.internalResponse.EmployeeInfoResponse;
+import com.hrm.employeeservice.dto.response.internalResponse.EmployeeInternalItemResponse;
 import com.hrm.employeeservice.dto.response.internalResponse.EmployeeSimpleResponse;
 import com.hrm.employeeservice.service.EmployeeInternalService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -36,4 +37,12 @@ public class EmployeeInternalController {
                 employeeInternalService.getEmployeesByManager(managerId)
         );
     }
+
+    @GetMapping("/by-hr/all-active-employee")
+    public BaseResponse<List<EmployeeInternalItemResponse>> getAllActiveEmployee() {
+        return BaseResponse.success(
+                employeeInternalService.getAllActiveInternal()
+        );
+    }
+
 }
