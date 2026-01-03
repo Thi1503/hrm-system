@@ -42,9 +42,13 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <!-- SPRING BOOT BOM (BẮT BUỘC) -->
             <dependency>
-                <groupId>org.springframework.kafka</groupId>
-                <artifactId>spring-kafka</artifactId>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>3.2.5</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

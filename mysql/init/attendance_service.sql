@@ -77,7 +77,7 @@ CREATE TABLE attendance_daily_summary (
                                           late_minutes INT NOT NULL DEFAULT 0,
                                           early_minutes INT NOT NULL DEFAULT 0,
                                           work_minutes INT NOT NULL DEFAULT 0,
-                                          status ENUM('NORMAL','LATE','EARLY','ABSENT') NOT NULL DEFAULT 'NORMAL',
+                                          status ENUM('NORMAL','LATE','EARLY','ABSENT','OFF','ON') NOT NULL DEFAULT 'NORMAL',
                                           created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
                                           CONSTRAINT fk_daily_summary_shift
