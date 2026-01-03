@@ -4,6 +4,9 @@ server:
     context-path: /attendance
 
 spring:
+  application:
+    name: attendance-service
+
   datasource:
     url: jdbc:mysql://localhost:3307/attendance_service
     username: root
@@ -14,6 +17,10 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: true
+  cloud:
+    openfeign:
+      micrometer:
+        enabled: true
 
   kafka:
     consumer:
@@ -22,7 +29,25 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
         spring.json.trusted.packages: "*"
+    listener:
+      observation-enabled: true
 
 employee:
   service:
     url: http://localhost:8081/employee
+
+management:
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0   # Trace 100% request (demo đồ án)
+
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+      # ⚠️ Dùng localhost vì attendance-service chạy ngoài Docker
+
+  endpoints:
+    web:
+      exposure:
+        include: health,info
