@@ -54,6 +54,12 @@ services:
     depends_on:
       - kafka
 
+  zipkin:
+    image: openzipkin/zipkin:latest
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+
   identity-service:
     build:
       context: ./identity-service

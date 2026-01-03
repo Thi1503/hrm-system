@@ -4,6 +4,9 @@ server:
     context-path: /request-approval
 
 spring:
+  application:
+    name: request-approval-service
+
   datasource:
     url: jdbc:mysql://localhost:3307/request_approval_service
     username: root
@@ -25,3 +28,18 @@ employee:
   service:
     url: http://localhost:8081/employee
 
+# ================== TRACING (ZIPKIN) ==================
+management:
+  tracing:
+    sampling:
+      probability: 1.0   # Trace 100% request (MVP đồ án)
+
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+      # ⚠️ dùng localhost vì service chạy ngoài Docker
+
+  endpoints:
+    web:
+      exposure:
+        include: health,info
