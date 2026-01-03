@@ -18,6 +18,11 @@ spring:
       ddl-auto: validate
     show-sql: true
 
+  cloud:
+    openfeign:
+      micrometer:
+        enabled: true
+
   kafka:
     bootstrap-servers: localhost:9092
     producer:
@@ -31,6 +36,7 @@ employee:
 # ================== TRACING (ZIPKIN) ==================
 management:
   tracing:
+    enabled: true
     sampling:
       probability: 1.0   # Trace 100% request (MVP đồ án)
 

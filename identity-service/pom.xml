@@ -39,6 +39,14 @@
             <artifactId>micrometer-tracing-bridge-brave</artifactId>
         </dependency>
 
+        <!-- OpenFeign -->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
+        </dependency>
+
+        <!-- Micrometer core -->
+
         <!-- Zipkin reporter -->
         <dependency>
             <groupId>io.zipkin.reporter2</groupId>

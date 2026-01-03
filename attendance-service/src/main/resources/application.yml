@@ -17,6 +17,10 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: true
+  cloud:
+    openfeign:
+      micrometer:
+        enabled: true
 
   kafka:
     consumer:
@@ -32,6 +36,7 @@ employee:
 
 management:
   tracing:
+    enabled: true
     sampling:
       probability: 1.0   # Trace 100% request (demo đồ án)
 

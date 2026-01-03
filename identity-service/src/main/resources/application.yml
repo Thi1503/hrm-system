@@ -18,6 +18,12 @@ spring:
       ddl-auto: validate
     show-sql: true
 
+    # ===== FEIGN TRACING (CỰC KỲ QUAN TRỌNG) =====
+  cloud:
+    openfeign:
+      micrometer:
+        enabled: true   # BẮT BUỘC để propagate trace qua Feign
+
 jwt:
   secret: 5a17ebf57445277d088804588e896e6ae347ec9815f9f9f0b95065101e022eb8
   expiration-days: 180
@@ -29,9 +35,11 @@ employee:
 # ================== TRACING (ZIPKIN) ==================
 management:
   tracing:
+    enabled: true
     sampling:
       probability: 1.0   # Trace 100% request (MVP đồ án)
-
+    propagation:
+      type: b3
   zipkin:
     tracing:
       endpoint: http://localhost:9411/api/v2/spans
@@ -41,3 +49,10 @@ management:
     web:
       exposure:
         include: health,info
+
+
+logging:
+  level:
+    io.micrometer.tracing: DEBUG
+    org.springframework.cloud.openfeign: DEBUG
+    feign: DEBUG
