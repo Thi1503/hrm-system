@@ -15,6 +15,14 @@ spring:
       ddl-auto: validate
     show-sql: true
 
+  kafka:
+    consumer:
+      group-id: attendance-service
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+
 employee:
   service:
     url: http://localhost:8081/employee
