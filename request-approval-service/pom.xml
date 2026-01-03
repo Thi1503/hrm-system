@@ -97,6 +97,10 @@
         </dependency>
 
         <!-- Micrometer core -->
+        <dependency>
+            <groupId>io.github.openfeign</groupId>
+            <artifactId>feign-micrometer</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>io.micrometer</groupId>
