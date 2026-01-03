@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
-import static com.hrm.attendanceservice.kafka.event.RequestType.EXPLANATION;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +22,6 @@ public class AttendanceApprovalService {
     private final AttendanceShiftRepository shiftRepository;
 
     public void handle(AttendanceApprovalEvent event) {
-
         switch (event.getRequestType()) {
             case EXPLANATION -> handleExplanation(event);
             case LEAVE -> handleLeave(event);
@@ -32,12 +30,19 @@ public class AttendanceApprovalService {
         }
     }
 
+    /* ================= EXPLANATION ================= */
+
     private void handleExplanation(AttendanceApprovalEvent e) {
 
         AttendanceDailySummaryEntity summary =
                 summaryRepository.findByEmployeeIdAndWorkDate(
                         e.getEmployeeId(), e.getWorkDate()
-                ).orElseThrow();
+                ).orElseThrow(() ->
+                        new BusinessException(
+                                ErrorCode.INVALID_REQUEST,
+                                "Không tồn tại ngày công để giải trình"
+                        )
+                );
 
         switch (e.getExplanationType()) {
             case "LATE", "EARLY" -> {
@@ -51,31 +56,28 @@ public class AttendanceApprovalService {
         summaryRepository.save(summary);
     }
 
+    /* ================= LEAVE ================= */
+
     private void handleLeave(AttendanceApprovalEvent e) {
 
-        AttendanceShiftEntity defaultShift =
-                shiftRepository.findAll().stream()
-                        .findFirst()
-                        .orElseThrow(() -> new BusinessException(
-                                ErrorCode.NOT_FOUND,
-                                "Chưa cấu hình ca làm việc"
-                        ));
-
+        AttendanceShiftEntity defaultShift = getDefaultShift();
 
         LocalDate date = e.getFromDate();
         while (!date.isAfter(e.getToDate())) {
 
+            LocalDate finalDate = date;
             AttendanceDailySummaryEntity summary =
                     summaryRepository.findByEmployeeIdAndWorkDate(
                             e.getEmployeeId(), date
-                    ).orElse(
+                    ).orElseGet(() ->
                             AttendanceDailySummaryEntity.builder()
                                     .employeeId(e.getEmployeeId())
-                                    .workDate(date)
+                                    .workDate(finalDate)
                                     .shift(defaultShift)
                                     .lateMinutes(0)
                                     .earlyMinutes(0)
                                     .workMinutes(0)
+                                    .status(AttendanceStatus.OFF)
                                     .build()
                     );
 
@@ -86,21 +88,16 @@ public class AttendanceApprovalService {
         }
     }
 
+    /* ================= OT ================= */
+
     private void handleOt(AttendanceApprovalEvent e) {
 
-        AttendanceShiftEntity defaultShift =
-                shiftRepository.findAll().stream()
-                        .findFirst()
-                        .orElseThrow(() -> new BusinessException(
-                                ErrorCode.NOT_FOUND,
-                                "Chưa cấu hình ca làm việc"
-                        ));
-
+        AttendanceShiftEntity defaultShift = getDefaultShift();
 
         AttendanceDailySummaryEntity summary =
                 summaryRepository.findByEmployeeIdAndWorkDate(
                         e.getEmployeeId(), e.getWorkDate()
-                ).orElse(
+                ).orElseGet(() ->
                         AttendanceDailySummaryEntity.builder()
                                 .employeeId(e.getEmployeeId())
                                 .workDate(e.getWorkDate())
@@ -108,6 +105,7 @@ public class AttendanceApprovalService {
                                 .lateMinutes(0)
                                 .earlyMinutes(0)
                                 .workMinutes(0)
+                                .status(AttendanceStatus.OT)
                                 .build()
                 );
 
@@ -115,14 +113,42 @@ public class AttendanceApprovalService {
         summaryRepository.save(summary);
     }
 
+    /* ================= REMOTE ================= */
+
     private void handleRemote(AttendanceApprovalEvent e) {
+
+        AttendanceShiftEntity defaultShift = getDefaultShift();
 
         AttendanceDailySummaryEntity summary =
                 summaryRepository.findByEmployeeIdAndWorkDate(
                         e.getEmployeeId(), e.getWorkDate()
-                ).orElseThrow();
+                ).orElseGet(() ->
+                        AttendanceDailySummaryEntity.builder()
+                                .employeeId(e.getEmployeeId())
+                                .workDate(e.getWorkDate())
+                                .shift(defaultShift)
+                                .lateMinutes(0)
+                                .earlyMinutes(0)
+                                .workMinutes(0)
+                                .status(AttendanceStatus.NORMAL)
+                                .build()
+                );
 
         summary.setStatus(AttendanceStatus.NORMAL);
         summaryRepository.save(summary);
     }
+
+    /* ================= COMMON ================= */
+
+    private AttendanceShiftEntity getDefaultShift() {
+        return shiftRepository.findAll().stream()
+                .findFirst()
+                .orElseThrow(() ->
+                        new BusinessException(
+                                ErrorCode.NOT_FOUND,
+                                "Chưa cấu hình ca làm việc"
+                        )
+                );
+    }
 }
+
