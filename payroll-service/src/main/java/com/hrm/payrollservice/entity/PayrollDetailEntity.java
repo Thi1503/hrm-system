@@ -4,6 +4,7 @@ import com.hrm.payrollservice.enums.PayrollComponentType;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -32,7 +33,7 @@ public class PayrollDetailEntity {
     PayrollComponentType componentType;
 
     @Column(nullable = false)
-    Double amount;
+    BigDecimal amount;
 
     @Column(length = 255)
     String description;

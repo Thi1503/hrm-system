@@ -4,6 +4,7 @@ import com.hrm.payrollservice.enums.PayrollStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -35,13 +36,13 @@ public class PayrollEntity {
     String month;
 
     @Column(nullable = false)
-    Double grossSalary;
+    BigDecimal grossSalary;
 
     @Column(nullable = false)
-    Double totalDeduction;
+    BigDecimal  totalDeduction;
 
     @Column(nullable = false)
-    Double netSalary;
+    BigDecimal  netSalary;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

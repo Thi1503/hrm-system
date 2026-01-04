@@ -4,6 +4,7 @@ import com.hrm.payrollservice.enums.TimesheetStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -35,7 +36,7 @@ public class TimesheetMonthEntity {
     String month; // YYYY-MM
 
     @Column(nullable = false)
-    Double totalWorkDays;
+    BigDecimal totalWorkDays;
 
     @Column(nullable = false)
     Integer totalWorkMinutes;
@@ -47,10 +48,10 @@ public class TimesheetMonthEntity {
     Integer earlyMinutes;
 
     @Column(nullable = false)
-    Double otHours;
+    BigDecimal otHours;
 
     @Column(nullable = false)
-    Double leaveDays;
+    BigDecimal leaveDays;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

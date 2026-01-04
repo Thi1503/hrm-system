@@ -3,6 +3,7 @@ package com.hrm.payrollservice.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -28,19 +29,19 @@ public class SalaryStructureEntity {
     Long employeeId;
 
     @Column(nullable = false)
-    Double baseSalary;
+    BigDecimal baseSalary;
 
     @Column(nullable = false)
-    Double allowance;
+    BigDecimal allowance;
 
     @Column(nullable = false)
-    Double otRate;
+    BigDecimal  otRate;
 
     @Column(nullable = false)
-    Double latePenaltyPerMin;
+    BigDecimal latePenaltyPerMin;
 
     @Column(nullable = false)
-    Double earlyPenaltyPerMin;
+    BigDecimal earlyPenaltyPerMin;
 
     @Column(nullable = false)
     LocalDate effectiveFrom;
