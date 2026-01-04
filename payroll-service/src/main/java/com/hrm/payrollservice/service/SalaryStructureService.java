@@ -3,6 +3,7 @@ package com.hrm.payrollservice.service;
 import com.hrm.common.exception.BusinessException;
 import com.hrm.common.enums.ErrorCode;
 import com.hrm.payrollservice.dto.request.UpdateSalaryStructureRequest;
+import com.hrm.payrollservice.dto.response.SalaryStructureResponse;
 import com.hrm.payrollservice.entity.SalaryStructureEntity;
 import com.hrm.payrollservice.repository.SalaryStructureRepository;
 import jakarta.transaction.Transactional;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -55,5 +57,28 @@ public class SalaryStructureService {
                 .build();
 
         salaryRepo.save(entity);
+    }
+
+
+    public SalaryStructureResponse getCurrentSalary(Long employeeId) {
+
+        SalaryStructureEntity entity = salaryRepo
+                .findTopByEmployeeIdAndEffectiveFromLessThanEqualOrderByEffectiveFromDesc(
+                        employeeId, LocalDate.now()
+                )
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.NOT_FOUND,
+                        "Salary structure not found"
+                ));
+
+        return SalaryStructureResponse.builder()
+                .employeeId(entity.getEmployeeId())
+                .baseSalary(entity.getBaseSalary())
+                .allowance(entity.getAllowance())
+                .otRate(entity.getOtRate())
+                .latePenaltyPerMin(entity.getLatePenaltyPerMin())
+                .earlyPenaltyPerMin(entity.getEarlyPenaltyPerMin())
+                .effectiveFrom(entity.getEffectiveFrom())
+                .build();
     }
 }
