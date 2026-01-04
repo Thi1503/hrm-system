@@ -24,5 +24,14 @@ public class PayrollTimesheetController {
                 timesheetService.generateMonth(month)
         );
     }
+
+    @PostMapping("/regenerate")
+    public BaseResponse<GenerateTimesheetResponse> regenerate(
+            @RequestParam String month
+    ) {
+        return BaseResponse.success(
+                timesheetService.regenerateMonth(month)
+        );
+    }
 }
 

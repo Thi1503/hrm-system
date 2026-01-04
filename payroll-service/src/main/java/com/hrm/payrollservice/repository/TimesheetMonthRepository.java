@@ -3,6 +3,7 @@ package com.hrm.payrollservice.repository;
 import com.hrm.payrollservice.entity.TimesheetMonthEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface TimesheetMonthRepository
@@ -12,5 +13,7 @@ public interface TimesheetMonthRepository
 
     Optional<TimesheetMonthEntity>
     findByEmployeeIdAndMonth(Long employeeId, String month);
+
+    List<TimesheetMonthEntity> findAllByMonth(String month);
 }
 

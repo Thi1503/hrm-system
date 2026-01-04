@@ -1,5 +1,7 @@
 package com.hrm.payrollservice.service;
 
+import com.hrm.common.enums.ErrorCode;
+import com.hrm.common.exception.BusinessException;
 import com.hrm.payrollservice.client.AttendanceClient;
 import com.hrm.payrollservice.client.EmployeeClient;
 import com.hrm.payrollservice.client.RequestApprovalClient;
@@ -10,6 +12,7 @@ import com.hrm.payrollservice.dto.response.client.PayrollAttendanceByMonthRespon
 import com.hrm.payrollservice.entity.TimesheetDailyEntity;
 import com.hrm.payrollservice.entity.TimesheetMonthEntity;
 import com.hrm.payrollservice.enums.RequestType;
+import com.hrm.payrollservice.enums.TimesheetStatus;
 import com.hrm.payrollservice.enums.WorkType;
 import com.hrm.payrollservice.repository.TimesheetDailyRepository;
 import com.hrm.payrollservice.repository.TimesheetMonthRepository;
@@ -38,6 +41,40 @@ public class PayrollTimesheetService {
 
     private final TimesheetMonthRepository monthRepo;
     private final TimesheetDailyRepository dailyRepo;
+
+
+    public GenerateTimesheetResponse regenerateMonth(String month) {
+
+        // 1️⃣ Lấy toàn bộ timesheet tháng
+        List<TimesheetMonthEntity> months =
+                monthRepo.findAllByMonth(month);
+
+        // 2️⃣ Nếu đã có bảng công nhưng KHÔNG phải DRAFT → chặn
+        for (TimesheetMonthEntity m : months) {
+            if (m.getStatus() != TimesheetStatus.DRAFT) {
+                throw new BusinessException(
+                        ErrorCode.TIMESHEET_ALREADY_CLOSED,
+                        "Timesheet month " + month + " has been closed"
+                );
+            }
+        }
+
+        // 3️⃣ Xoá timesheet_daily
+        List<Long> monthIds = months.stream()
+                .map(TimesheetMonthEntity::getId)
+                .toList();
+
+        if (!monthIds.isEmpty()) {
+            dailyRepo.deleteAllByTimesheetMonthIdIn(monthIds);
+        }
+
+        // 4️⃣ Xoá timesheet_month
+        monthRepo.deleteAll(months);
+
+        // 5️⃣ Generate lại
+        return generateMonth(month);
+    }
+
 
     public GenerateTimesheetResponse generateMonth(String month) {
 
