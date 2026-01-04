@@ -8,5 +8,8 @@ import java.util.List;
 public interface TimesheetDailyRepository
         extends JpaRepository<TimesheetDailyEntity, Long> {
     void deleteAllByTimesheetMonthIdIn(List<Long> timesheetMonthIds);
+
+    List<TimesheetDailyEntity> findAllByTimesheetMonthIdOrderByWorkDateAsc(Long timesheetMonthId);
+
 }
 
