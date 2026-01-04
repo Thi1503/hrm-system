@@ -10,6 +10,7 @@ public enum ErrorCode {
     FORBIDDEN,
     SYSTEM_ERROR,
     USER_ALREADY_EXISTS,
+    INVALID_STATE,
 
 
     // AUTH
