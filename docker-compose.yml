@@ -119,5 +119,21 @@ services:
       DB_PASSWORD: root
     depends_on:
       - mysql
+
+  payroll-service:
+    build:
+      context: ./payroll-service
+    container_name: payroll-service
+    ports:
+      - "8084:8084"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: payroll_service
+      DB_USER: root
+      DB_PASSWORD: root
+    depends_on:
+      - mysql
+
 volumes:
   mysql_data:

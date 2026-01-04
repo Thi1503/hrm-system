@@ -5,6 +5,7 @@ Chạy dự án
    Get-Content mysql/seed/02-employee.sql | docker exec -i mysql mysql -uroot -proot
    Get-Content mysql/seed/03-attendance.sql | docker exec -i mysql mysql -uroot -proot
    Get-Content mysql/seed/04-request-approval.sql | docker exec -i mysql mysql -uroot -proot
+4. Get-Content mysql/seed/05-payroll.sql | docker exec -i mysql mysql -uroot -proot
 
 
 📘 HRM System – Backend (DATN)

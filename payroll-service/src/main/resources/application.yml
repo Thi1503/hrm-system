@@ -1,0 +1,53 @@
+server:
+  port: 8084
+  servlet:
+    context-path: /payroll
+
+spring:
+  application:
+    name: payroll-service
+
+  datasource:
+    url: jdbc:mysql://localhost:3307/payroll_service
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+
+  cloud:
+    openfeign:
+      micrometer:
+        enabled: true
+
+  kafka:
+    consumer:
+      group-id: payroll-service
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+    listener:
+      observation-enabled: true
+
+employee:
+  service:
+    url: http://localhost:8081/employee
+
+management:
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
+  endpoints:
+    web:
+      exposure:
+        include: health,info
