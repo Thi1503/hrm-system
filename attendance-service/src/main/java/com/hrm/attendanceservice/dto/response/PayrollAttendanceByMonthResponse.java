@@ -1,5 +1,6 @@
-package com.hrm.attendanceservice.entity;
+package com.hrm.attendanceservice.dto.response;
 
+import com.hrm.attendanceservice.entity.AttendanceStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

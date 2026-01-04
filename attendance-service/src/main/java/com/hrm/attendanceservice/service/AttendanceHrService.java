@@ -7,6 +7,7 @@ import com.hrm.attendanceservice.dto.request.RecalculateAttendanceRequest;
 import com.hrm.attendanceservice.dto.response.HrAttendanceByDateResponse;
 import com.hrm.attendanceservice.dto.response.HrAttendanceByMonthResponse;
 import com.hrm.attendanceservice.dto.response.MyMonthAttendanceItemResponse;
+import com.hrm.attendanceservice.dto.response.PayrollAttendanceByMonthResponse;
 import com.hrm.attendanceservice.entity.*;
 import com.hrm.attendanceservice.repository.AttendanceDailySummaryRepository;
 import com.hrm.attendanceservice.repository.AttendanceLogRepository;
