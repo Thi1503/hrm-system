@@ -4,6 +4,7 @@ import com.hrm.attendanceservice.dto.request.*;
 import com.hrm.attendanceservice.dto.response.HrAttendanceByDateResponse;
 import com.hrm.attendanceservice.dto.response.HrAttendanceByMonthResponse;
 import com.hrm.attendanceservice.dto.response.MyMonthAttendanceItemResponse;
+import com.hrm.attendanceservice.entity.PayrollAttendanceByMonthResponse;
 import com.hrm.attendanceservice.service.AttendanceHrService;
 import com.hrm.common.response.BaseResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -88,6 +89,17 @@ public class AttendanceHrController {
                 )
         );
     }
+
+
+    @GetMapping("/internal/payroll/by-month")
+    BaseResponse<List<PayrollAttendanceByMonthResponse>> getForPayroll(
+            @RequestParam String month
+    ) {
+        return BaseResponse.success(
+                service.getForPayrollByMonth(month)
+        );
+    }
+
 
 
 }
