@@ -23,6 +23,8 @@ public interface RemoteRequestRepository
             List<Long> employeeIds,
             ApprovalStatus status
     );
+
+    List<RemoteRequestEntity> findByStatus(ApprovalStatus status);
 }
 
 

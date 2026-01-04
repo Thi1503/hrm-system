@@ -7,10 +7,8 @@ import com.hrm.attendanceservice.dto.request.RecalculateAttendanceRequest;
 import com.hrm.attendanceservice.dto.response.HrAttendanceByDateResponse;
 import com.hrm.attendanceservice.dto.response.HrAttendanceByMonthResponse;
 import com.hrm.attendanceservice.dto.response.MyMonthAttendanceItemResponse;
-import com.hrm.attendanceservice.entity.AttendanceDailySummaryEntity;
-import com.hrm.attendanceservice.entity.AttendanceLogEntity;
-import com.hrm.attendanceservice.entity.AttendanceShiftEntity;
-import com.hrm.attendanceservice.entity.AttendanceStatus;
+import com.hrm.attendanceservice.dto.response.PayrollAttendanceByMonthResponse;
+import com.hrm.attendanceservice.entity.*;
 import com.hrm.attendanceservice.repository.AttendanceDailySummaryRepository;
 import com.hrm.attendanceservice.repository.AttendanceLogRepository;
 import com.hrm.attendanceservice.repository.AttendanceShiftRepository;
@@ -255,6 +253,37 @@ public class AttendanceHrService {
                         .status(s.getStatus())
                         .checkInTime(s.getCheckInTime())
                         .checkOutTime(s.getCheckOutTime())
+                        .workMinutes(s.getWorkMinutes())
+                        .lateMinutes(s.getLateMinutes())
+                        .earlyMinutes(s.getEarlyMinutes())
+                        .build()
+                )
+                .toList();
+    }
+
+    public List<PayrollAttendanceByMonthResponse> getForPayrollByMonth(
+            String month
+    ) {
+        YearMonth ym;
+        try {
+            ym = YearMonth.parse(month); // yyyy-MM
+        } catch (Exception e) {
+            throw new BusinessException(
+                    ErrorCode.INVALID_REQUEST,
+                    "month phải có dạng yyyy-MM"
+            );
+        }
+
+        LocalDate from = ym.atDay(1);
+        LocalDate to = ym.atEndOfMonth();
+
+        return summaryRepository
+                .findAllByWorkDateBetween(from, to)
+                .stream()
+                .map(s -> PayrollAttendanceByMonthResponse.builder()
+                        .employeeId(s.getEmployeeId())
+                        .workDate(s.getWorkDate())
+                        .status(s.getStatus())
                         .workMinutes(s.getWorkMinutes())
                         .lateMinutes(s.getLateMinutes())
                         .earlyMinutes(s.getEarlyMinutes())

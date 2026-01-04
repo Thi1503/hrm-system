@@ -42,16 +42,27 @@ public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     );
 
 
-        @Query("""
-        select new com.hrm.employeeservice.dto.response.internalResponse.EmployeeSimpleResponse(
-            e.id, e.fullName
-        )
-        from Employee e
-        where e.manager.id = :managerId
-    """)
-        List<EmployeeSimpleResponse> findSimpleByManagerId(@Param("managerId") Long managerId);
+    @Query("""
+                select new com.hrm.employeeservice.dto.response.internalResponse.EmployeeSimpleResponse(
+                    e.id, e.fullName
+                )
+                from Employee e
+                where e.manager.id = :managerId
+            """)
+    List<EmployeeSimpleResponse> findSimpleByManagerId(@Param("managerId") Long managerId);
 
     List<Employee> findByEmploymentStatus(EmploymentStatus status);
+
+
+    @Query("""
+                select new com.hrm.employeeservice.dto.response.internalResponse.EmployeeSimpleResponse(
+                    e.id,
+                    e.fullName
+                )
+                from Employee e
+                where e.employmentStatus = com.hrm.employeeservice.entity.EmploymentStatus.ACTIVE
+            """)
+    List<EmployeeSimpleResponse> findAllSimpleForPayroll();
 
 }
 

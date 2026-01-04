@@ -45,4 +45,11 @@ public class EmployeeInternalController {
         );
     }
 
+    @GetMapping("/by-payroll/all-employees")
+    public BaseResponse<List<EmployeeSimpleResponse>> getAllEmployeesForPayroll() {
+        return BaseResponse.success(
+                employeeInternalService.getAllEmployeesForPayroll()
+        );
+    }
+
 }

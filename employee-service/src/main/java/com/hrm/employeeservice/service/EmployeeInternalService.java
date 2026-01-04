@@ -56,5 +56,10 @@ public class EmployeeInternalService {
                 .toList();
     }
 
+    public List<EmployeeSimpleResponse> getAllEmployeesForPayroll() {
+        return employeeRepository.findAllSimpleForPayroll();
+    }
+
+
 
 }
