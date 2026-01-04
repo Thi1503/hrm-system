@@ -37,6 +37,14 @@ employee:
   service:
     url: http://localhost:8081/employee
 
+attendance:
+  service:
+    url: http://localhost:8082/attendance
+
+request-approval:
+  service:
+    url: http://localhost:8083/request-approval
+
 management:
   tracing:
     enabled: true

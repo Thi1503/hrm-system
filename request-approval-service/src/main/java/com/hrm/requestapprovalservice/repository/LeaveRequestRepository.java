@@ -1,5 +1,6 @@
 package com.hrm.requestapprovalservice.repository;
 
+import com.hrm.requestapprovalservice.entity.AttendanceExplanationEntity;
 import com.hrm.requestapprovalservice.entity.LeaveRequestEntity;
 import com.hrm.requestapprovalservice.enums.ApprovalStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,4 +25,6 @@ public interface LeaveRequestRepository
             List<Long> employeeIds,
             ApprovalStatus status
     );
+
+    List<LeaveRequestEntity> findByStatus(ApprovalStatus status);
 }

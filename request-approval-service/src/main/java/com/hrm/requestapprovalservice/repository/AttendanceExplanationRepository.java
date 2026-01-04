@@ -23,4 +23,6 @@ public interface AttendanceExplanationRepository
             List<Long> employeeIds,
             ApprovalStatus status
     );
+
+    List<AttendanceExplanationEntity> findByStatus(ApprovalStatus status);
 }
