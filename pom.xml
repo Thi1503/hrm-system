@@ -25,6 +25,7 @@
         <module>employee-service</module>
         <module>attendance-service</module>
         <module>request-approval-service</module>
+        <module>payroll-service</module>
     </modules>
 
     <properties>
