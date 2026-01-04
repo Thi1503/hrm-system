@@ -23,4 +23,6 @@ public interface OtRequestRepository
             List<Long> employeeIds,
             ApprovalStatus status
     );
+
+    List<OtRequestEntity> findByStatus(ApprovalStatus status);
 }
