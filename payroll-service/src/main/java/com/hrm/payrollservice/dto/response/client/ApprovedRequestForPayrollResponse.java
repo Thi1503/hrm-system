@@ -1,6 +1,6 @@
 package com.hrm.payrollservice.dto.response.client;
 
-import com.hrm.requestapprovalservice.enums.RequestType;
+import com.hrm.payrollservice.enums.RequestType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
