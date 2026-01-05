@@ -3,7 +3,6 @@ package com.hrm.payrollservice.service;
 import com.hrm.common.enums.ErrorCode;
 import com.hrm.common.exception.BusinessException;
 import com.hrm.payrollservice.dto.request.CalculatePayrollRequest;
-import com.hrm.payrollservice.dto.response.PayrollDetailResponse;
 import com.hrm.payrollservice.dto.response.PayrollResponse;
 import com.hrm.payrollservice.entity.*;
 import com.hrm.payrollservice.enums.PayrollComponentType;
@@ -19,12 +18,13 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.YearMonth;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class PayrollCalculateService {
+public class PayrollService {
 
 
     private final TimesheetMonthRepository timesheetRepo;
@@ -160,7 +160,6 @@ public class PayrollCalculateService {
         saveDetail(payroll.getId(), PayrollComponentType.EARLY_PENALTY, earlyPenalty.negate(), "Early penalty");
 
 
-
         var details = payrollDetailRepo.findAllByPayrollId(payroll.getId());
 
         PayrollResponse response = payrollMapper.toResponse(payroll);
@@ -169,6 +168,49 @@ public class PayrollCalculateService {
         );
         return response;
     }
+
+
+    // ===== DUYỆT LƯƠNG =====
+    public void approve(Long payrollId) {
+
+        PayrollEntity payroll = payrollRepo.findById(payrollId)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.NOT_FOUND,
+                        "Payroll not found"
+                ));
+
+        if (payroll.getStatus() != PayrollStatus.DRAFT) {
+            throw new BusinessException(
+                    ErrorCode.INVALID_STATE,
+                    "Only DRAFT payroll can be approved"
+            );
+        }
+
+        payroll.setStatus(PayrollStatus.APPROVED);
+        payroll.setApprovedAt(LocalDateTime.now());
+        payrollRepo.save(payroll);
+    }
+
+    // ===== TRẢ LƯƠNG =====
+    public void pay(Long payrollId) {
+
+        PayrollEntity payroll = payrollRepo.findById(payrollId)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.NOT_FOUND,
+                        "Payroll not found"
+                ));
+
+        if (payroll.getStatus() != PayrollStatus.APPROVED) {
+            throw new BusinessException(
+                    ErrorCode.INVALID_STATE,
+                    "Only APPROVED payroll can be paid"
+            );
+        }
+
+        payroll.setStatus(PayrollStatus.PAID);
+        payrollRepo.save(payroll);
+    }
+
 
     private void saveDetail(Long payrollId,
                             PayrollComponentType type,
