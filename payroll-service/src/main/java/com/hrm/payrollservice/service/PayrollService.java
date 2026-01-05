@@ -211,6 +211,26 @@ public class PayrollService {
         payrollRepo.save(payroll);
     }
 
+    public PayrollResponse getMyPayroll(Long employeeId, String month) {
+
+        PayrollEntity payroll = payrollRepo
+                .findByEmployeeIdAndMonth(employeeId, month)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.NOT_FOUND,
+                        "Payroll not found"
+                ));
+
+        var details = payrollDetailRepo.findAllByPayrollId(payroll.getId());
+
+        PayrollResponse response = payrollMapper.toResponse(payroll);
+        response.setDetails(
+                payrollMapper.toDetailResponses(details)
+        );
+
+        return response;
+    }
+
+
 
     private void saveDetail(Long payrollId,
                             PayrollComponentType type,
