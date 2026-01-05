@@ -33,6 +33,28 @@ public class PayrollCalculateService {
     private final PayrollDetailRepository payrollDetailRepo;
     private final PayrollMapper payrollMapper;
 
+
+    public PayrollResponse regenerate(CalculatePayrollRequest req) {
+
+        payrollRepo.findByEmployeeIdAndMonth(req.getEmployeeId(), req.getMonth())
+                .ifPresent(payroll -> {
+
+                    if (payroll.getStatus() != PayrollStatus.DRAFT) {
+                        throw new BusinessException(
+                                ErrorCode.INVALID_STATE,
+                                "Only DRAFT payroll can be regenerated"
+                        );
+                    }
+
+                    payrollDetailRepo.deleteAllByPayrollId(payroll.getId());
+                    payrollRepo.delete(payroll);
+                });
+
+        // tính lại từ đầu
+        return calculate(req);
+    }
+
+
     public PayrollResponse calculate(CalculatePayrollRequest req) {
 
 

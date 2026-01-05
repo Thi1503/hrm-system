@@ -8,18 +8,28 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/payroll")
+@RequestMapping("/payroll/hr")
 @RequiredArgsConstructor
 public class PayrollCalculateController {
 
     private final PayrollCalculateService calculateService;
 
     @PostMapping("/calculate")
-    public BaseResponse<PayrollResponse> calculate(
+    public BaseResponse<PayrollResponse> calculatePayroll(
             @RequestBody CalculatePayrollRequest request
     ) {
         return BaseResponse.success(
                 calculateService.calculate(request)
         );
     }
+
+    @PostMapping("/regenerate")
+    public BaseResponse<PayrollResponse> regeneratePayroll(
+            @RequestBody CalculatePayrollRequest request
+    ) {
+        return BaseResponse.success(
+                calculateService.regenerate(request)
+        );
+    }
+
 }

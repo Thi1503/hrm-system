@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface PayrollDetailRepository extends JpaRepository<PayrollDetailEntity, Long> {
     List<PayrollDetailEntity> findAllByPayrollId(Long payrollId);
+    void deleteAllByPayrollId(Long payrollId);
 }
