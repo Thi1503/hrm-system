@@ -38,7 +38,7 @@ management:
   tracing:
     enabled: true
     sampling:
-      probability: 1.0   # Trace 100% request (demo ?? án)
+      probability: 1.0
 
   zipkin:
     tracing:
