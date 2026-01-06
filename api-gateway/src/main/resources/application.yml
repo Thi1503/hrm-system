@@ -1,0 +1,55 @@
+server:
+  port: 8086
+
+spring:
+  application:
+    name: api-gateway
+
+  cloud:
+    gateway:
+      routes:
+
+        - id: identity-service
+          uri: http://identity-service:8080
+          predicates:
+            - Path=/identity/**
+
+        - id: employee-service
+          uri: http://employee-service:8081
+          predicates:
+            - Path=/employee/**
+
+        - id: attendance-service
+          uri: http://attendance-service:8082
+          predicates:
+            - Path=/attendance/**
+
+        - id: request-approval-service
+          uri: http://request-approval-service:8083
+          predicates:
+            - Path=/approvals/**
+
+        - id: payroll-service
+          uri: http://payroll-service:8084
+          predicates:
+            - Path=/payroll/**
+
+        - id: notification-service
+          uri: http://notification-service:8085
+          predicates:
+            - Path=/notification/**
+
+management:
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+
+  zipkin:
+    tracing:
+      endpoint: http://zipkin:9411/api/v2/spans
+
+  endpoints:
+    web:
+      exposure:
+        include: health,info
