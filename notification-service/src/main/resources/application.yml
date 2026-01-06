@@ -1,14 +1,14 @@
 server:
-  port: 8082
+  port: 8085
   servlet:
-    context-path: /attendance
+    context-path: /notification
 
 spring:
   application:
-    name: attendance-service
+    name: notification-service
 
   datasource:
-    url: jdbc:mysql://localhost:3307/attendance_service
+    url: jdbc:mysql://localhost:3307/notification_service
     username: root
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -17,6 +17,8 @@ spring:
     hibernate:
       ddl-auto: validate
     show-sql: true
+    database-platform: org.hibernate.dialect.MySQLDialect
+
   cloud:
     openfeign:
       micrometer:
@@ -24,7 +26,7 @@ spring:
 
   kafka:
     consumer:
-      group-id: attendance-service
+      group-id: notification-service
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       properties:
@@ -32,15 +34,11 @@ spring:
     listener:
       observation-enabled: true
 
-employee:
-  service:
-    url: http://localhost:8081/employee
-
 management:
   tracing:
     enabled: true
     sampling:
-      probability: 1.0   # Trace 100% request (demo đồ án)
+      probability: 1.0   # Trace 100% request (demo ?? �n)
 
   zipkin:
     tracing:

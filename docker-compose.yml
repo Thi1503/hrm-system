@@ -135,5 +135,20 @@ services:
     depends_on:
       - mysql
 
+  notification-service:
+    build:
+      context: ./notification-service
+    container_name: notification-service
+    ports:
+      - "8085:8085"
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: notification_service
+      DB_USER: root
+      DB_PASSWORD: root
+    depends_on:
+      - mysql
+
 volumes:
   mysql_data:
