@@ -38,3 +38,30 @@ spring:
           uri: http://localhost:8085
           predicates:
             - Path=/notification/**
+
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    urls:
+      - name: identity
+        url: /identity/v3/api-docs
+
+      - name: employee
+        url: /employee/v3/api-docs
+
+      - name: attendance
+        url: /attendance/v3/api-docs
+
+      - name: request-approval
+        url: /request-approval/v3/api-docs
+
+      - name: payroll
+        url: /payroll/v3/api-docs
+
+      - name: notification
+        url: /notification/v3/api-docs
+
+
+jwt:
+  secret: 5a17ebf57445277d088804588e896e6ae347ec9815f9f9f0b95065101e022eb8
