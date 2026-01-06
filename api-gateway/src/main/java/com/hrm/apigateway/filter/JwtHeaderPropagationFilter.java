@@ -20,35 +20,42 @@ public class JwtHeaderPropagationFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
+        System.out.println("🔥 [GATEWAY] FILTER HIT");
+        System.out.println("🔥 [GATEWAY] PATH = " + exchange.getRequest().getURI());
+
         String authHeader = exchange.getRequest()
                 .getHeaders()
                 .getFirst(HttpHeaders.AUTHORIZATION);
 
-        // Không có token → cho qua
+        System.out.println("🔥 [GATEWAY] AUTH = " + authHeader);
+
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return chain.filter(exchange);
         }
 
         try {
-            String token = authHeader.substring(7);
+            Claims claims = jwtUtil.parseClaims(authHeader.substring(7));
+            System.out.println("🔥 [GATEWAY] CLAIMS = " + claims);
 
-            Claims claims = jwtUtil.parseClaims(token);
+            Number emp = claims.get("employeeId", Number.class);
+            Long employeeId = emp != null ? emp.longValue() : null;
 
-            // ⚠️ GIẢ ĐỊNH token có claim "userId"
-            String userId = claims.get("userId", String.class);
+            System.out.println("🔥 [GATEWAY] EMPLOYEE_ID = " + employeeId);
 
-            if (userId != null) {
+            if (employeeId != null) {
                 ServerWebExchange mutatedExchange = exchange.mutate()
-                        .request(builder ->
-                                builder.header("X-User-Id", userId)
-                        )
+                        .request(builder -> {
+                            builder.headers(h -> h.remove("X-User-Id"));
+                            builder.header("X-User-Id", employeeId.toString());
+                        })
                         .build();
 
+                System.out.println("🔥 [GATEWAY] ADD HEADER X-User-Id=" + employeeId);
                 return chain.filter(mutatedExchange);
             }
 
         } catch (Exception ex) {
-            // Token sai → KHÔNG chặn (tạm thời)
+            ex.printStackTrace();
             return chain.filter(exchange);
         }
 
@@ -57,6 +64,8 @@ public class JwtHeaderPropagationFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return -1; // chạy rất sớm
+        return -1;
     }
 }
+
+
