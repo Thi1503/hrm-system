@@ -26,6 +26,7 @@
         <module>attendance-service</module>
         <module>request-approval-service</module>
         <module>payroll-service</module>
+        <module>notification-service</module>
     </modules>
 
     <properties>
