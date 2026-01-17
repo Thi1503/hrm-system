@@ -62,6 +62,20 @@ springdoc:
       - name: notification
         url: /notification/v3/api-docs
 
+management:
+  tracing:
+    enabled: true
+    sampling:
+      probability: 1.0
+
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
+
+  endpoints:
+    web:
+      exposure:
+        include: health,info
 
 jwt:
   secret: 5a17ebf57445277d088804588e896e6ae347ec9815f9f9f0b95065101e022eb8
