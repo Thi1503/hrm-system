@@ -20,6 +20,11 @@ public class JwtHeaderPropagationFilter implements GlobalFilter, Ordered {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
+        // ✅ BỎ QUA CORS PREFLIGHT (OPTIONS)
+        if ("OPTIONS".equalsIgnoreCase(exchange.getRequest().getMethod().name())) {
+            return chain.filter(exchange);
+        }
+
         System.out.println("🔥 [GATEWAY] FILTER HIT");
         System.out.println("🔥 [GATEWAY] PATH = " + exchange.getRequest().getURI());
 
@@ -61,6 +66,7 @@ public class JwtHeaderPropagationFilter implements GlobalFilter, Ordered {
 
         return chain.filter(exchange);
     }
+
 
     @Override
     public int getOrder() {
