@@ -150,5 +150,20 @@ services:
     depends_on:
       - mysql
 
+  api-gateway:
+    build:
+      context: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8086:8086"
+    depends_on:
+      - identity-service
+      - employee-service
+      - attendance-service
+      - request-approval-service
+      - payroll-service
+      - notification-service
+
+
 volumes:
   mysql_data:
