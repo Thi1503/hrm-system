@@ -247,7 +247,7 @@ public class EmployeeService {
         employee.setPhoneNumber(request.getPhoneNumber());
         employee.setEmail(request.getEmail());
         employee.setAddress(request.getAddress());
-        employee.setAvatarUrl(request.getAvatarUrl());
+        employee.setCitizenId(request.getCitizenId());
         employee.setUpdatedAt(LocalDateTime.now());
 
         return employeeMapper.toResponse(
