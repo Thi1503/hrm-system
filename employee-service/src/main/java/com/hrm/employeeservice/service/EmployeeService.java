@@ -230,10 +230,10 @@ public class EmployeeService {
     }
 
     @Transactional
-    public EmployeeResponse updateMyInfo(String accountId,
+    public EmployeeResponse updateMyInfo(Long employeeId,
                                          UpdateMyInfoRequest request) {
 
-        Employee employee = employeeRepository.findByAccountId(accountId)
+        Employee employee = employeeRepository.findById(employeeId)
                 .orElseThrow(() -> new BusinessException(
                         ErrorCode.NOT_FOUND,
                         "Không tìm thấy thông tin nhân viên"
