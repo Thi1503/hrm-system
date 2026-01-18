@@ -6,6 +6,7 @@ import com.hrm.employeeservice.dto.request.EmployeeCreateRequest;
 import com.hrm.employeeservice.dto.request.EmployeeSearchRequest;
 import com.hrm.employeeservice.dto.request.EmployeeUpdateRequest;
 import com.hrm.employeeservice.dto.request.UpdateMyInfoRequest;
+import com.hrm.employeeservice.dto.response.EmployeeMyInfoResponse;
 import com.hrm.employeeservice.dto.response.internalResponse.EmployeeInfoResponse;
 import com.hrm.employeeservice.dto.response.EmployeeItemResponse;
 import com.hrm.employeeservice.dto.response.EmployeeResponse;
@@ -27,6 +28,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.List;
 
 @Service
@@ -277,5 +279,44 @@ public class EmployeeService {
 
         employeeWorkHistoryRepository.save(history);
     }
+
+    @Transactional()
+    public EmployeeMyInfoResponse getMyInfo(Long employeeId) {
+
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new BusinessException(
+                        ErrorCode.NOT_FOUND,
+                        "Không tìm thấy thông tin nhân viên"
+                ));
+
+        EmployeeMyInfoResponse response = employeeMapper.toMyInfo(employee);
+
+        response.setSeniority(
+                calculateSeniority(employee.getStartWorkDate())
+        );
+
+        return response;
+    }
+
+
+    private String calculateSeniority(LocalDate startDate) {
+        if (startDate == null) {
+            return null;
+        }
+
+        Period period = Period.between(startDate, LocalDate.now());
+
+        int years = period.getYears();
+        int months = period.getMonths();
+        int days = period.getDays();
+
+        StringBuilder result = new StringBuilder();
+        if (years > 0) result.append(years).append(" năm, ");
+        if (months > 0) result.append(months).append(" tháng, ");
+        result.append(days).append(" ngày");
+
+        return result.toString();
+    }
+
 
 }
