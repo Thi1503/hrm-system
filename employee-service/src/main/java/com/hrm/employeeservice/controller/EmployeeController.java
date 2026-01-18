@@ -69,7 +69,7 @@ public class EmployeeController {
     /** UPDATE MY INFO (X-User-Id từ Gateway / Postman) */
     @PostMapping("/update-my-info")
     BaseResponse<EmployeeResponse> updateMyInfo(
-            @RequestHeader("X-User-Id") String userId,
+            @RequestHeader("X-User-Id") Long userId,
             @RequestBody UpdateMyInfoRequest body) {
 
         return BaseResponse.success(
