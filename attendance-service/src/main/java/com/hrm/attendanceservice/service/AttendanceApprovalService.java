@@ -34,27 +34,54 @@ public class AttendanceApprovalService {
 
     private void handleExplanation(AttendanceApprovalEvent e) {
 
+
         AttendanceDailySummaryEntity summary =
                 summaryRepository.findByEmployeeIdAndWorkDate(
                         e.getEmployeeId(), e.getWorkDate()
-                ).orElseThrow(() ->
-                        new BusinessException(
-                                ErrorCode.INVALID_REQUEST,
-                                "Không tồn tại ngày công để giải trình"
-                        )
-                );
+                ).orElseGet(() -> {
+                    //  Case: quên check-in / check-out / quên chấm công
+                    AttendanceDailySummaryEntity s = new AttendanceDailySummaryEntity();
+                    s.setEmployeeId(e.getEmployeeId());
+                    s.setWorkDate(e.getWorkDate());
+                    s.setStatus(AttendanceStatus.ABSENT); // mặc định
+                    s.setLateMinutes(0);
+                    s.setEarlyMinutes(0);
+                    s.setWorkMinutes(0);
+                    return s;
+                });
 
         switch (e.getExplanationType()) {
-            case "LATE", "EARLY" -> {
+
+            case "LATE" -> {
                 summary.setLateMinutes(0);
+
+                if (summary.getEarlyMinutes() == 0) {
+                    summary.setStatus(AttendanceStatus.NORMAL);
+                }
+            }
+
+            case "EARLY" -> {
                 summary.setEarlyMinutes(0);
+
+                if (summary.getLateMinutes() == 0) {
+                    summary.setStatus(AttendanceStatus.NORMAL);
+                }
+            }
+
+            case "ABSENT" -> {
+                // Giải trình quên chấm công
                 summary.setStatus(AttendanceStatus.NORMAL);
             }
-            case "ABSENT" -> summary.setStatus(AttendanceStatus.NORMAL);
+
+            default -> throw new BusinessException(
+                    ErrorCode.INVALID_REQUEST,
+                    "Loại giải trình không hợp lệ"
+            );
         }
 
         summaryRepository.save(summary);
     }
+
 
     /* ================= LEAVE ================= */
 

@@ -126,10 +126,25 @@ public class AttendanceService {
 
         AttendanceDailySummaryEntity summary =
                 summaryRepository.findByEmployeeIdAndWorkDate(employeeId, today)
-                        .orElseThrow(() -> new BusinessException(
-                                ErrorCode.NOT_FOUND,
-                                "Chưa có dữ liệu công ngày hôm nay"
-                        ));
+                        .orElseGet(() -> AttendanceDailySummaryEntity.builder()
+                                .employeeId(employeeId)
+                                .workDate(today)
+                                .shift(
+                                        shiftRepository.findAll().stream()
+                                                .findFirst()
+                                                .orElseThrow(() -> new BusinessException(
+                                                        ErrorCode.NOT_FOUND,
+                                                        "Chưa cấu hình ca làm việc"
+                                                ))
+                                )
+                                .lateMinutes(0)
+                                .earlyMinutes(0)
+                                .workMinutes(0)
+                                .status(AttendanceStatus.ABSENT)
+                                .createdAt(now)
+                                .build()
+                        );
+
 
         /* ===== 1. Location ===== */
         LocationCheckResult locationResult = validateLocation(
