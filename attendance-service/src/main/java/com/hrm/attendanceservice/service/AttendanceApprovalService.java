@@ -34,27 +34,27 @@ public class AttendanceApprovalService {
 
     private void handleExplanation(AttendanceApprovalEvent e) {
 
+        AttendanceShiftEntity defaultShift = getDefaultShift();
 
         AttendanceDailySummaryEntity summary =
                 summaryRepository.findByEmployeeIdAndWorkDate(
                         e.getEmployeeId(), e.getWorkDate()
-                ).orElseGet(() -> {
-                    //  Case: quên check-in / check-out / quên chấm công
-                    AttendanceDailySummaryEntity s = new AttendanceDailySummaryEntity();
-                    s.setEmployeeId(e.getEmployeeId());
-                    s.setWorkDate(e.getWorkDate());
-                    s.setStatus(AttendanceStatus.ABSENT); // mặc định
-                    s.setLateMinutes(0);
-                    s.setEarlyMinutes(0);
-                    s.setWorkMinutes(0);
-                    return s;
-                });
+                ).orElseGet(() ->
+                        AttendanceDailySummaryEntity.builder()
+                                .employeeId(e.getEmployeeId())
+                                .workDate(e.getWorkDate())
+                                .shift(defaultShift)
+                                .status(AttendanceStatus.ABSENT)
+                                .lateMinutes(0)
+                                .earlyMinutes(0)
+                                .workMinutes(0)
+                                .build()
+                );
 
         switch (e.getExplanationType()) {
 
             case "LATE" -> {
                 summary.setLateMinutes(0);
-
                 if (summary.getEarlyMinutes() == 0) {
                     summary.setStatus(AttendanceStatus.NORMAL);
                 }
@@ -62,14 +62,12 @@ public class AttendanceApprovalService {
 
             case "EARLY" -> {
                 summary.setEarlyMinutes(0);
-
                 if (summary.getLateMinutes() == 0) {
                     summary.setStatus(AttendanceStatus.NORMAL);
                 }
             }
 
             case "ABSENT" -> {
-                // Giải trình quên chấm công
                 summary.setStatus(AttendanceStatus.NORMAL);
             }
 
@@ -81,7 +79,6 @@ public class AttendanceApprovalService {
 
         summaryRepository.save(summary);
     }
-
 
     /* ================= LEAVE ================= */
 
