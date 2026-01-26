@@ -14,12 +14,11 @@ import java.time.LocalDate;
 public class UpdateMyInfoRequest {
 
     String fullName;
+    String citizenId;
     Gender gender;
     LocalDate dateOfBirth;
 
     String phoneNumber;
     String email;
     String address;
-
-    String avatarUrl;
 }

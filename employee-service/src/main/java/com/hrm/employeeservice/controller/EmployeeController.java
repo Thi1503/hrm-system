@@ -3,6 +3,7 @@ package com.hrm.employeeservice.controller;
 import com.hrm.common.response.BaseResponse;
 import com.hrm.employeeservice.dto.request.*;
 import com.hrm.employeeservice.dto.request.internalRequest.AccountIdRequest;
+import com.hrm.employeeservice.dto.response.EmployeeMyInfoResponse;
 import com.hrm.employeeservice.dto.response.internalResponse.EmployeeInfoResponse;
 import com.hrm.employeeservice.dto.response.EmployeeItemResponse;
 import com.hrm.employeeservice.dto.response.EmployeeResponse;
@@ -76,5 +77,15 @@ public class EmployeeController {
                 employeeService.updateMyInfo(userId, body)
         );
     }
+
+    @GetMapping("/my-info")
+    BaseResponse<EmployeeMyInfoResponse> getMyInfo(
+            @RequestHeader("X-User-Id") Long employeeId) {
+
+        return BaseResponse.success(
+                employeeService.getMyInfo(employeeId)
+        );
+    }
+
 
 }

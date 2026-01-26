@@ -34,23 +34,47 @@ public class AttendanceApprovalService {
 
     private void handleExplanation(AttendanceApprovalEvent e) {
 
+        AttendanceShiftEntity defaultShift = getDefaultShift();
+
         AttendanceDailySummaryEntity summary =
                 summaryRepository.findByEmployeeIdAndWorkDate(
                         e.getEmployeeId(), e.getWorkDate()
-                ).orElseThrow(() ->
-                        new BusinessException(
-                                ErrorCode.INVALID_REQUEST,
-                                "Không tồn tại ngày công để giải trình"
-                        )
+                ).orElseGet(() ->
+                        AttendanceDailySummaryEntity.builder()
+                                .employeeId(e.getEmployeeId())
+                                .workDate(e.getWorkDate())
+                                .shift(defaultShift)
+                                .status(AttendanceStatus.ABSENT)
+                                .lateMinutes(0)
+                                .earlyMinutes(0)
+                                .workMinutes(0)
+                                .build()
                 );
 
         switch (e.getExplanationType()) {
-            case "LATE", "EARLY" -> {
+
+            case "LATE" -> {
                 summary.setLateMinutes(0);
+                if (summary.getEarlyMinutes() == 0) {
+                    summary.setStatus(AttendanceStatus.NORMAL);
+                }
+            }
+
+            case "EARLY" -> {
                 summary.setEarlyMinutes(0);
+                if (summary.getLateMinutes() == 0) {
+                    summary.setStatus(AttendanceStatus.NORMAL);
+                }
+            }
+
+            case "ABSENT" -> {
                 summary.setStatus(AttendanceStatus.NORMAL);
             }
-            case "ABSENT" -> summary.setStatus(AttendanceStatus.NORMAL);
+
+            default -> throw new BusinessException(
+                    ErrorCode.INVALID_REQUEST,
+                    "Loại giải trình không hợp lệ"
+            );
         }
 
         summaryRepository.save(summary);
